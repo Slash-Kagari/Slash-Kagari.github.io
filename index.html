@@ -1,0 +1,216 @@
+<!--
+  /Kagari 公式サイト トップページ
+  役割: ヒーロー / About / Products 一覧 / Contact を1ページに集約
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/Kagari — 篝に必要な灯りを。</title>
+<meta name="description" content="/Kagari（スラッシュ・カガリ）— 過剰な情報の時代に、必要な灯りだけを。個人開発者の屋号。" />
+<meta property="og:title" content="/Kagari — 篝に必要な灯りを。" />
+<meta property="og:description" content="Light for the watchfire. 個人開発者 /Kagari の公式サイト。" />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<!-- ========== ナビゲーション ========== -->
+<nav class="nav" aria-label="Main navigation">
+  <a href="#top" class="nav__brand" aria-label="Slash-Kagari home">
+    <span class="brand__slash">/</span><span class="brand__name">Kagari</span>
+  </a>
+  <ul class="nav__menu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ========== ヒーロー: 篝の格子 + 火の粉 ========== -->
+<section id="top" class="hero" aria-labelledby="hero-heading">
+  <!-- 篝籠の格子パターン(SVG)と火の粉(canvas)を重ねる -->
+  <canvas id="ember-canvas" class="hero__canvas" aria-hidden="true"></canvas>
+  <svg class="hero__lattice" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="lattice-fade" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="#2A3445" stop-opacity="0.9" />
+        <stop offset="100%" stop-color="#2A3445" stop-opacity="0" />
+      </radialGradient>
+      <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="3" result="b" />
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <g id="lattice-group" stroke="url(#lattice-fade)" stroke-width="1" fill="none"></g>
+  </svg>
+
+  <!-- カーソル追従の暖色グロー -->
+  <div class="hero__cursor-glow" aria-hidden="true"></div>
+
+  <div class="hero__content">
+    <div class="hero__eyebrow">Slash-Kagari / 個人開発工房</div>
+    <h1 id="hero-heading" class="hero__title">
+      <span class="hero__slash" data-text="/">/</span><span class="hero__kagari">Kagari</span>
+    </h1>
+    <p class="hero__tag-ja">篝に必要な灯りを。</p>
+    <p class="hero__tag-en">Light for the watchfire.</p>
+    <a href="#products" class="hero__scroll">
+      <span>Explore</span>
+      <span class="hero__scroll-line" aria-hidden="true"></span>
+    </a>
+  </div>
+</section>
+
+<!-- ========== About: 開発者の考え ========== -->
+<section id="about" class="about" aria-labelledby="about-heading">
+  <div class="section__index">01 / ABOUT</div>
+  <h2 id="about-heading" class="section__title">
+    <span class="title__jp">篝の由来</span>
+    <span class="title__en">Why the watchfire</span>
+  </h2>
+  <div class="about__grid">
+    <div class="about__lead">
+      <p>過剰な情報が溢れる時代に、<em>必要な灯りだけ</em>を差し出したい。</p>
+    </div>
+    <div class="about__body">
+      <p>「篝（かがり）」は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
+      <p>情報もサービスも溢れる今、使う人の生活にそっと馴染み、日々を少しだけ整えるような道具を作りたい。派手さではなく、手触りと確かさを。</p>
+      <p>一人の開発者が、丁寧に時間をかけて、納得のいくものだけを世に出す。それが /Kagari の仕事です。</p>
+    </div>
+    <ul class="about__principles" aria-label="開発の原点">
+      <li><span>01</span>小さな不便を、手触りのよい道具で照らす</li>
+      <li><span>02</span>使う人の生活にそっと馴染むものを</li>
+      <li><span>03</span>納得のいくものだけを、ひとつずつ</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== Products: 索引型の一覧 ========== -->
+<section id="products" class="products" aria-labelledby="products-heading">
+  <div class="section__index">02 / PRODUCTS</div>
+  <h2 id="products-heading" class="section__title">
+    <span class="title__jp">製品索引</span>
+    <span class="title__en">The catalogue</span>
+  </h2>
+  <p class="products__note">増えていく製品を、一覧として素早く見渡せる索引です。カードにホバーで詳細が灯ります。</p>
+
+  <!-- 索引グリッド: 増えても見やすい密度を維持 -->
+  <ul class="products__grid" role="list">
+    <li class="product-cell" data-status="released">
+      <a href="products/only-task.html" class="product-cell__link">
+        <div class="product-cell__icon" aria-hidden="true">
+          <span class="product-cell__mono">OT</span>
+        </div>
+        <div class="product-cell__meta">
+          <span class="product-cell__name">Only Task</span>
+          <span class="product-cell__tag">シンプルなタスク管理</span>
+        </div>
+        <span class="product-cell__status" aria-label="公開中">●</span>
+      </a>
+    </li>
+
+    <li class="product-cell" data-status="developing">
+      <a href="products/life-in-seconds.html" class="product-cell__link">
+        <div class="product-cell__icon" aria-hidden="true">
+          <span class="product-cell__mono">LS</span>
+        </div>
+        <div class="product-cell__meta">
+          <span class="product-cell__name">Life in Seconds</span>
+          <span class="product-cell__tag">人生を秒数で可視化</span>
+        </div>
+        <span class="product-cell__status" aria-label="開発中">◐</span>
+      </a>
+    </li>
+
+    <!-- 今後のプロダクト用プレースホルダー -->
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+    <li class="product-cell product-cell--placeholder" aria-hidden="true"><div class="product-cell__empty">—</div></li>
+  </ul>
+
+  <!-- 注目製品(エディトリアル枠) -->
+  <div class="products__feature">
+    <div class="feature__label">FEATURED</div>
+    <div class="feature__card">
+      <div class="feature__visual" aria-hidden="true">
+        <div class="feature__pulse"></div>
+        <span class="feature__mono">OT</span>
+      </div>
+      <div class="feature__text">
+        <h3>Only Task</h3>
+        <p>ひとつだけ、今日やるべきことに集中する。余計な機能を足さず、使う人の一日にそっと寄り添うタスク管理アプリ。</p>
+        <div class="feature__actions">
+          <a class="btn btn--primary" href="products/only-task.html">詳細を見る</a>
+          <a class="btn btn--ghost" href="#" aria-disabled="true">Google Play（準備中）</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== Contact ========== -->
+<section id="contact" class="contact" aria-labelledby="contact-heading">
+  <div class="section__index">03 / CONTACT</div>
+  <h2 id="contact-heading" class="section__title">
+    <span class="title__jp">連絡先</span>
+    <span class="title__en">Get in touch</span>
+  </h2>
+  <div class="contact__grid">
+    <p class="contact__lead">お問い合わせ・お仕事のご相談は、下記のメールアドレスまでお願いします。</p>
+    <a class="contact__email" href="mailto:slash.kagari@outlook.com">
+      <span class="contact__email-label">EMAIL</span>
+      <span class="contact__email-addr">slash.kagari@outlook.com</span>
+      <span class="contact__email-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- ========== フッター ========== -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">
+      <span class="brand__slash">/</span><span class="brand__name">Kagari</span>
+      <p class="footer__tag">Light for the watchfire.</p>
+    </div>
+    <nav class="footer__nav" aria-label="Footer">
+      <div>
+        <h4>Products</h4>
+        <ul>
+          <li><a href="products/only-task.html">Only Task</a></li>
+          <li><a href="products/life-in-seconds.html">Life in Seconds</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="legal/only-task-privacy.html">Only Task プライバシー</a></li>
+          <li><a href="legal/only-task-terms.html">Only Task 利用規約</a></li>
+          <li><a href="legal/only-task-tokushoho.html">特商法表記</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Link</h4>
+        <ul>
+          <li><a href="https://github.com/Slash-Kagari" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="mailto:slash.kagari@outlook.com">Email</a></li>
+        </ul>
+      </div>
+    </nav>
+  </div>
+  <div class="footer__bottom">
+    <span>© /Kagari</span>
+    <span class="footer__meta">Crafted in Japan</span>
+  </div>
+</footer>
+
+<script src="assets/js/main.js" defer></script>
+</body>
+</html>
