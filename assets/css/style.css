@@ -5,18 +5,18 @@
 
 /* ---------- デザイントークン ---------- */
 :root {
-  /* 色: 墨紺ベースに琥珀・朱・金 */
-  --c-bg:        #070911;
-  --c-bg-2:      #0D1220;
-  --c-surface:   #11182A;
-  --c-ink:       #E8E1D3;
-  --c-ink-dim:   #8A8678;
-  --c-line:      #1E2538;
-  --c-line-2:    #2A3445;
-  --c-ember:     #E8A33D;
-  --c-flame:     #C84A1F;
-  --c-gold:      #F4C77A;
-  --c-red:       #9B2A1A;
+  /* 色: 夕暮れ〜行灯の明るさ。和紙の暖かみを含む中明度ベース */
+  --c-bg:        #1C1A24;
+  --c-bg-2:      #252231;
+  --c-surface:   #2E2A3A;
+  --c-ink:       #F5EEDF;
+  --c-ink-dim:   #A69F8E;
+  --c-line:      #3A3545;
+  --c-line-2:    #4A4356;
+  --c-ember:     #F0B259;
+  --c-flame:     #E05A2A;
+  --c-gold:      #FBD994;
+  --c-red:       #B03525;
 
   /* タイポ */
   --f-jp-serif:  "Shippori Mincho", "Noto Serif JP", serif;
@@ -139,8 +139,9 @@ body::before {
   overflow: hidden;
   padding: 8rem 2rem 4rem;
   background:
-    radial-gradient(ellipse at 50% 60%, rgba(200, 74, 31, 0.12), transparent 50%),
-    radial-gradient(ellipse at 50% 120%, rgba(232, 163, 61, 0.18), transparent 60%),
+    radial-gradient(ellipse at 50% 40%, rgba(240, 178, 89, 0.1), transparent 55%),
+    radial-gradient(ellipse at 50% 80%, rgba(224, 90, 42, 0.22), transparent 55%),
+    radial-gradient(ellipse at 50% 130%, rgba(251, 217, 148, 0.28), transparent 60%),
     var(--c-bg);
 }
 

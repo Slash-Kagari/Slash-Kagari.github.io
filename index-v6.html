@@ -1,9 +1,13 @@
 <!--
-  /Kagari — 公式サイト (Digital Watchfire)
+  /Kagari — V6 (v3アップグレード版 / Digital Watchfire)
   方向性:
-    - 白ベース + 朱の「/」を主役に、静かな燃焼エフェクト
-    - 設計図(blueprint)・隅印・縦書きマージナリアでデジタル感
-    - 製品はスマホホーム画面風に並べ、押下でベント型詳細を展開
+    - v3の白ベース＋朱「/」斬撃を継承
+    - 背景: 意味のないグレー丸を排し、設計図(blueprint)・実測寸法・隅印・スキャンライン等の
+      情報密度で「デジタル感」を出す
+    - 製品: スマホ実機モック上のアプリアイコングリッド + Dock。
+      アイコン押下で下にエディトリアル・ベントの詳細パネルが展開
+    - ライブコンソール / 縦書きマージナリア / 印章・割印といった意匠で
+      "工房 × ターミナル × 雑誌" の三層構造
 -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -12,9 +16,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>/Kagari — 篝に必要な灯りを。</title>
 <meta name="description" content="個人開発スタジオ /Kagari の公式サイト。篝に必要な灯りを、丁寧に。" />
-<meta property="og:title" content="/Kagari — 篝に必要な灯りを。" />
-<meta property="og:description" content="個人開発スタジオ /Kagari の公式サイト。" />
-<meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet" />
@@ -33,7 +34,7 @@
   --c-shu-warm: #E85A36;
   --c-ai:       #1E3A5F;
   --c-ai-2:     #335B86;
-  --c-ai-blue:  #1E5DA6;
+  --c-ai-blue:  #1E5DA6;       /* 設計図用の青焼き */
   --c-kin:      #B8893A;
   --c-kin-soft: #E0BB73;
   --c-line:     #D9D0BC;
@@ -46,6 +47,7 @@
 
   --t-hero:   clamp(4.5rem, 2.5rem + 9.5vw, 12.5rem);
   --e-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in:     cubic-bezier(0.7, 0, 0.84, 0);
   --e-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -67,7 +69,7 @@ ul,ol{ list-style:none; }
 button{ font:inherit; cursor:pointer; border:0; background:none; color:inherit; padding:0; }
 img,svg{ display:block; max-width:100%; }
 
-/* ===== グローバル背景 ===== */
+/* ===== グローバル背景: 設計図(blueprint) ===== */
 .bg-grid{
   position:fixed; inset:0; pointer-events:none; z-index:0;
   background-image:
@@ -92,7 +94,7 @@ img,svg{ display:block; max-width:100%; }
   mix-blend-mode: multiply;
 }
 
-/* ===== 計測ルーラー & クロスヘア ===== */
+/* ===== 端のルーラーとクロスヘア(計測の意匠) ===== */
 .rulers{ position:fixed; inset:5rem 1rem 1rem 1rem; pointer-events:none; z-index:50; }
 .rulers::before,.rulers::after{
   content:""; position:absolute;
@@ -166,6 +168,7 @@ img,svg{ display:block; max-width:100%; }
   100%{ box-shadow: 0 0 0 0 rgba(200,57,28,0); }
 }
 
+/* ===== 斬撃エフェクト層 ===== */
 .slash-fx{ position:fixed; inset:0; pointer-events:none; z-index:80; overflow:hidden; }
 
 /* ===== ヒーロー ===== */
@@ -180,17 +183,20 @@ img,svg{ display:block; max-width:100%; }
   z-index:3;
 }
 
+/* 左マージナリア(縦書き) */
 .hero__margin-l{
   align-self:stretch;
-  display:flex; flex-direction:column; justify-content:center; align-items:flex-start;
+  display:flex; flex-direction:column; justify-content:space-between;
   padding: 1rem 0;
+  font-family: var(--f-mono); font-size:.62rem; letter-spacing:.22em;
+  color: var(--c-ink-3); text-transform:uppercase;
 }
 .hero__margin-l b{
   writing-mode: vertical-rl;
   font-family: var(--f-mincho);
   font-weight:700; font-size:.95rem;
   letter-spacing:.5em;
-  color: var(--c-ink);
+  color: var(--c-ink); text-transform:none;
 }
 .hero__margin-r{
   align-self:stretch; justify-self:end;
@@ -204,7 +210,7 @@ img,svg{ display:block; max-width:100%; }
   font-size:.78rem; letter-spacing:.05em;
   transform: rotate(-6deg);
   background: rgba(200,57,28,.04);
-  position:relative; line-height:1; text-align:center;
+  position:relative;
 }
 .hero__margin-r .stamp::after{
   content:""; position:absolute; inset:3px;
@@ -216,6 +222,17 @@ img,svg{ display:block; max-width:100%; }
 }
 
 .hero__main{ position:relative; }
+
+.hero__meta{
+  display:flex; justify-content:space-between; gap:1.2rem; flex-wrap:wrap;
+  font-family: var(--f-mono); font-size:.66rem; letter-spacing:.22em;
+  color: var(--c-ink-3); text-transform:uppercase;
+  margin-bottom: 3rem; padding-bottom:.9rem;
+  border-bottom:1px dashed var(--c-line);
+}
+.hero__meta span::before{ content:"● "; color: var(--c-shu); }
+.hero__meta span:nth-child(2)::before{ color: var(--c-ai); }
+.hero__meta span:nth-child(3)::before{ color: var(--c-kin); }
 
 .hero__title{
   font-family: var(--f-en);
@@ -234,82 +251,27 @@ img,svg{ display:block; max-width:100%; }
   white-space:nowrap;
 }
 
-/* === 静かに燃える「/」 === */
-.slash-wrap{
-  position:relative; display:inline-block; line-height:1;
-}
-.slash-flame{
-  position:absolute; left:50%; bottom: 88%;
-  width: .55em; height: .5em;
-  transform: translateX(-50%);
-  pointer-events:none;
-  filter: blur(1px);
-  z-index:0;
-  mix-blend-mode: screen;
-}
-.slash-flame::before,
-.slash-flame::after{
-  content:"";
-  position:absolute; inset:0;
-  border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
-  background: radial-gradient(ellipse at 50% 100%,
-    #FFE4B0 0%, #FFB264 30%, #E85A36 55%, rgba(200,57,28,.6) 75%, transparent 90%);
-  transform-origin: 50% 100%;
-  animation: flameDance 2.6s ease-in-out infinite;
-  opacity: .8;
-}
-.slash-flame::after{
-  inset: 8% 18%;
-  background: radial-gradient(ellipse at 50% 100%,
-    #FFFFFF 0%, #FFE08A 35%, #FF8A4C 70%, transparent 90%);
-  animation-duration: 1.7s;
-  animation-delay: .2s;
-  opacity:.85;
-}
-@keyframes flameDance{
-  0%,100%{ transform: scale(1, 1) skewX(-2deg); opacity:.78; }
-  25%    { transform: scale(1.05, 1.18) skewX(3deg); opacity:.92; }
-  50%    { transform: scale(.95, .92) skewX(-3deg); opacity:.7; }
-  75%    { transform: scale(1.08, 1.1) skewX(2deg); opacity:.88; }
-}
-
-.embers{
-  position:absolute; left:0; top:-1.8em; width: 1.4em; height: 2em;
-  pointer-events:none; z-index:0;
-}
-.ember{
-  position:absolute; bottom:0; left: var(--lx, 50%);
-  width: 3px; height: 3px; border-radius:50%;
-  background: radial-gradient(circle, #FFD18A, #E85A36 50%, transparent 70%);
-  filter: blur(.5px);
-  opacity: 0;
-  animation: emberRise var(--dur, 3.2s) ease-out infinite;
-  animation-delay: var(--delay, 0s);
-}
-@keyframes emberRise{
-  0%   { opacity:0; transform: translate(0, 0) scale(.6); }
-  15%  { opacity:.85; }
-  100% { opacity:0; transform: translate(var(--dx, 0), -160px) scale(.2); }
-}
-
+/* 朱の「/」スラッシュボタン */
 .slash-btn{
   color: var(--c-shu);
   font-weight:700; font-size:1.18em;
   position:relative; line-height:1;
   padding:0 .05em;
   transition: transform 200ms var(--e-out), filter 200ms;
-  filter: drop-shadow(0 0 8px rgba(200,57,28,.25));
-  animation: emberGlow 3.4s ease-in-out infinite;
-  z-index:1;
-}
-@keyframes emberGlow{
-  0%,100%{ filter: drop-shadow(0 0 6px rgba(200,57,28,.22)) drop-shadow(0 0 14px rgba(232,90,54,.15)); color: var(--c-shu); }
-  50%    { filter: drop-shadow(0 0 12px rgba(232,90,54,.45)) drop-shadow(0 0 24px rgba(255,180,80,.22)); color: var(--c-shu-warm); }
+  filter: drop-shadow(0 0 0 transparent);
 }
 .slash-btn:hover{
   transform: translateY(-4px) rotate(-2deg);
-  filter: drop-shadow(0 0 22px rgba(200,57,28,.55)) drop-shadow(0 0 38px rgba(255,180,80,.3));
+  filter: drop-shadow(0 0 22px rgba(200,57,28,.55));
 }
+.slash-btn::after{
+  content:"tap to ignite";
+  position:absolute; top:-.3em; right:-3.2em;
+  font-family: var(--f-mono); font-size:.1em; letter-spacing:.25em;
+  color: var(--c-ink-3); text-transform:uppercase;
+  opacity:0; transition: opacity 300ms;
+}
+.slash-btn:hover::after{ opacity:1; }
 .slash-btn.is-burning{ animation: burn 1.2s var(--e-out) forwards; }
 @keyframes burn{
   0%   { color: var(--c-shu); filter: drop-shadow(0 0 0 transparent); }
@@ -332,69 +294,38 @@ img,svg{ display:block; max-width:100%; }
 }
 .hero__tag-en::before{ content:"─ "; color: var(--c-ink-3); letter-spacing:0; }
 
-/* === Windows コマンドプロンプト風 === */
+/* ライブ・コンソール (デジタル感の核) */
 .console{
   margin-top: 3rem;
-  font-family: "Consolas", var(--f-mono);
+  border:1px solid var(--c-ink);
+  background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(244,239,227,.4));
+  font-family: var(--f-mono); font-size:.72rem;
   position:relative;
-  border: 1px solid #555;
-  box-shadow:
-    0 8px 24px rgba(14,13,17,.18),
-    0 2px 4px rgba(14,13,17,.08);
-  max-width: 720px;
+  box-shadow: 4px 4px 0 rgba(14,13,17,.06);
 }
 .console__bar{
   display:flex; justify-content:space-between; align-items:center;
-  height: 28px;
-  padding: 0 .35rem 0 .7rem;
-  background: linear-gradient(180deg, #DEDEDE 0%, #C8C8C8 100%);
-  border-bottom: 1px solid #888;
-  color: #1a1a1a;
-  font-family: "Segoe UI", var(--f-sans);
-  font-size: .72rem;
-  letter-spacing: 0;
-  text-transform: none;
+  padding: .45rem .9rem;
+  background: var(--c-ink); color: var(--c-paper);
+  font-size:.6rem; letter-spacing:.25em; text-transform:uppercase;
 }
-.console__title{ display:flex; align-items:center; gap:.45rem; }
-.console__title-icon{
-  width: 14px; height: 14px;
-  background: #1a1a1a;
-  display:inline-grid; place-items:center;
-  color:#fff; font-family: "Consolas", monospace;
-  font-size: 9px; font-weight:700;
-  line-height:1;
-}
-.console__winbtns{ display:flex; }
-.console__winbtns i{
-  display:grid; place-items:center;
-  width: 28px; height: 22px;
-  font-family: "Segoe UI", sans-serif; font-size: .75rem;
-  color: #1a1a1a; font-style:normal;
-  cursor: default;
-}
-.console__winbtns i:hover{ background: rgba(0,0,0,.08); }
-.console__winbtns i.x:hover{ background: #E81123; color:#fff; }
-
+.console__dots{ display:flex; gap:.3rem; }
+.console__dots i{ width:8px; height:8px; border-radius:50%; background: var(--c-paper-3); display:inline-block; }
+.console__dots i:nth-child(1){ background: var(--c-shu); }
+.console__dots i:nth-child(2){ background: var(--c-kin-soft); }
+.console__dots i:nth-child(3){ background: var(--c-ai-2); }
 .console__body{
-  background: #0C0C0C;
-  color: #CCCCCC;
-  padding: .8rem 1rem;
-  min-height: 150px;
-  font-size: .82rem;
-  line-height: 1.55;
-  font-family: "Consolas", "Cascadia Code", var(--f-mono);
+  padding: 1rem 1.1rem; min-height: 90px;
+  display:grid; grid-template-columns: auto 1fr; gap:.4rem 1rem;
+  align-items:start;
 }
-.console__line{ display:block; white-space: pre-wrap; word-break: break-word; }
-.console__line .path{ color: #CCCCCC; }
-.console__line .gt{ color: #CCCCCC; }
-.console__line .out{ color: #CCCCCC; }
-.console__line .key{ color: #61D6D6; }
-.console__line .val{ color: #F9F1A5; }
-.console__line .num{ color: #B5CEA8; }
-.console__line .dim{ color: #767676; }
+.console__prompt{ color: var(--c-shu); font-weight:700; }
+.console__line{ color: var(--c-ink-2); }
+.console__line .k{ color: var(--c-ai); }
+.console__line .v{ color: var(--c-shu-deep); }
 .console__cursor{
   display:inline-block; width:.5em; height:1em;
-  background: #CCCCCC; margin-left:.1em; vertical-align:-2px;
+  background: var(--c-ink); margin-left:.1em; vertical-align:-2px;
   animation: blink 1s steps(2) infinite;
 }
 @keyframes blink{ 50%{ opacity:0; } }
@@ -473,12 +404,51 @@ section:not(.hero){
   float:left; line-height:1; padding:.3rem .5rem 0 0;
   color: var(--c-shu); font-weight:900;
 }
-.about__body strong{ color: var(--c-ink); font-weight:700; }
+
+.about__principles{
+  grid-column: 1 / -1; margin-top: 2.5rem;
+  display:grid; grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--c-ink);
+  background: var(--c-paper);
+  position:relative;
+}
+.about__principles::before{
+  content:"三 則 / SAN-SOKU";
+  position:absolute; top:-.55rem; left: 1.2rem;
+  background: var(--c-paper); padding: 0 .6rem;
+  font-family: var(--f-mono); font-size:.6rem; letter-spacing:.3em;
+  color: var(--c-ai); text-transform:uppercase;
+}
+.about__principles li{
+  padding: 2.4rem 1.8rem 2rem;
+  font-family: var(--f-mincho); font-size:1.02rem;
+  border-right: 1px solid var(--c-line);
+  position:relative; overflow:hidden;
+  transition: background 300ms;
+}
+.about__principles li:last-child{ border-right:0; }
+.about__principles li:hover{ background: var(--c-paper-2); }
+.about__principles li::before{
+  content: attr(data-n);
+  position:absolute; right:-.6rem; top:-1.2rem;
+  font-family: var(--f-en); font-weight:700; font-style:italic;
+  font-size: 6rem; color: var(--c-paper-3);
+  line-height:1; pointer-events:none;
+}
+.about__principles li span{
+  display:block;
+  font-family: var(--f-mono); font-size:.66rem; letter-spacing:.3em;
+  color: var(--c-ai); margin-bottom:.7rem;
+  position:relative; z-index:1;
+}
+.about__principles li p{ position:relative; z-index:1; }
 @media (max-width: 860px){
   .about__grid{ grid-template-columns: 1fr; gap:2.5rem; }
+  .about__principles{ grid-template-columns: 1fr; }
+  .about__principles li{ border-right:0; border-bottom:1px solid var(--c-line); }
 }
 
-/* ===== PRODUCTS ===== */
+/* ===== PRODUCTS (中核) ===== */
 .products__intro{
   display:grid; grid-template-columns: 1fr 1fr; gap:3rem;
   margin-bottom: 3rem; align-items:end;
@@ -500,9 +470,10 @@ section:not(.hero){
   border:1px solid var(--c-ink);
   background: linear-gradient(180deg, var(--c-paper) 0%, var(--c-paper-2) 100%);
   position:relative;
-  min-height: 800px;
+  min-height: 540px;
 }
 .products__stage::before{
+  /* 角の隅印 */
   content:"製品索引 / CATALOG"; position:absolute;
   top: -.65rem; left: 1.2rem;
   background: var(--c-paper); padding: 0 .6rem;
@@ -517,10 +488,10 @@ section:not(.hero){
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 @media (max-width: 880px){
-  .products__stage{ grid-template-columns: 1fr; min-height: auto; }
+  .products__stage{ grid-template-columns: 1fr; }
 }
 
-/* === スマホモック (現代的) === */
+/* === スマホモック === */
 .phone{
   padding: 3rem 2rem 2rem;
   display:flex; align-items:center; justify-content:center;
@@ -534,158 +505,70 @@ section:not(.hero){
   .phone{ border-right:0; border-bottom:1px dashed var(--c-line-2); }
 }
 .phone__device{
-  width: 360px; height: 740px;
-  background: #050507;
-  border-radius: 52px;
-  border: 5px solid #1a1a1f;
+  width: 320px; height: 560px;
+  background: #0E0D11;
+  border-radius: 44px;
+  border: 8px solid #2C2832;
   box-shadow:
-    0 35px 70px -20px rgba(14,13,17,.55),
-    0 12px 24px -10px rgba(200,57,28,.18),
-    inset 0 0 0 1.5px #2C2832;
+    0 30px 60px -20px rgba(14,13,17,.45),
+    0 10px 20px -10px rgba(200,57,28,.18),
+    inset 0 0 0 1px rgba(255,255,255,.04);
   position:relative; overflow:hidden;
   transform: rotate(-1.5deg);
   transition: transform 600ms var(--e-out);
 }
 .phone__device:hover{ transform: rotate(0deg); }
-
-.phone__island{
-  position:absolute; top: 14px; left:50%; transform:translateX(-50%);
-  width: 118px; height: 32px;
-  background: #000;
-  border-radius: 999px;
-  z-index:6;
-  display:flex; align-items:center; justify-content:flex-end;
-  padding: 0 12px;
+.phone__notch{
+  position:absolute; top: 12px; left:50%; transform:translateX(-50%);
+  width: 100px; height: 26px; background: #000; border-radius: 14px;
+  z-index:5;
 }
-.phone__island::after{
-  content:""; width:8px; height:8px; border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #5B7FA8 0%, #1E3A5F 60%, #000 100%);
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+.phone__notch::after{
+  content:""; position:absolute; right: 14px; top: 50%; transform:translateY(-50%);
+  width:6px; height:6px; border-radius:50%;
+  background: radial-gradient(circle at 30% 30%, #5B7FA8, #1E3A5F);
 }
-
 .phone__statusbar{
-  position:absolute; top: 18px; left: 0; right:0; padding: 0 30px;
+  position:absolute; top: 16px; left: 0; right:0; padding: 0 24px;
   display:flex; justify-content:space-between; align-items:center;
-  font-family: "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-  font-size:.78rem; font-weight:600; color:#fff;
-  letter-spacing: -.01em;
-  z-index: 5;
+  font-family: var(--f-mono); font-size:.6rem; color:#fff;
+  letter-spacing: .05em;
+  z-index: 6;
 }
-.phone__statusbar .right{ display:flex; gap:.4rem; align-items:center; }
-.phone__statusbar svg{ display:inline-block; vertical-align:middle; }
-
+.phone__statusbar .right{ display:flex; gap:.3rem; align-items:center; }
 .phone__wallpaper{
   position:absolute; inset:0;
   background:
-    radial-gradient(ellipse at 50% 0%, rgba(200,57,28,.22), transparent 60%),
-    radial-gradient(ellipse at 50% 100%, rgba(30,58,95,.4), transparent 65%),
-    linear-gradient(180deg, #1A1820 0%, #0A0810 60%);
+    radial-gradient(ellipse at 50% 0%, rgba(200,57,28,.18), transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(30,58,95,.35), transparent 65%),
+    linear-gradient(180deg, #1A1820 0%, #0E0D11 60%);
 }
+/* 壁紙の薄い「/」 */
 .phone__wallpaper::before{
   content:"/"; position:absolute; left:50%; top:50%;
   transform: translate(-50%,-55%) rotate(-12deg);
   font-family: var(--f-en); font-style:italic; font-weight:700;
-  font-size: 360px; line-height:1;
-  color: rgba(200,57,28,.07);
+  font-size: 320px; line-height:1;
+  color: rgba(200,57,28,.06);
   pointer-events:none;
 }
 
 .phone__home{
-  position:absolute; inset: 70px 18px 100px 18px;
-  display:grid; grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: min-content;
-  gap: 16px 12px;
+  position:absolute; inset: 56px 18px 88px 18px;
+  display:grid; grid-template-columns: repeat(3, 1fr);
+  gap: 18px 14px;
+  align-content:flex-start;
   z-index:4;
 }
-
-/* === ウィジェット === */
-.widget{
-  border-radius: 22px;
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,.1);
-  padding: 14px 16px;
-  color: #fff;
-  position:relative; overflow:hidden;
-}
-.widget--clock{
-  grid-column: span 2; grid-row: span 2;
-  display:flex; flex-direction:column; justify-content:space-between;
-  background: linear-gradient(135deg, rgba(200,57,28,.32) 0%, rgba(30,58,95,.45) 100%);
-}
-.widget--clock .label{
-  font-family: var(--f-mono); font-size:.55rem;
-  letter-spacing:.25em; text-transform:uppercase;
-  color: rgba(255,255,255,.6);
-}
-.widget--clock .time{
-  font-family: var(--f-en); font-style:italic; font-weight:600;
-  font-size: 2.6rem; line-height:1;
-  color:#fff;
-  text-shadow: 0 2px 10px rgba(0,0,0,.4);
-  letter-spacing: -.02em;
-}
-.widget--clock .date{
-  font-family: var(--f-mono); font-size:.62rem;
-  color: rgba(255,255,255,.7);
-  letter-spacing:.1em;
-}
-.widget--studio{
-  grid-column: span 2; grid-row: span 1;
-  display:grid; grid-template-columns: 1fr auto; gap:.4rem;
-  align-items:center;
-  background: linear-gradient(135deg, rgba(30,93,166,.22) 0%, rgba(14,13,17,.45) 100%);
-}
-.widget--studio .head{
-  font-family: var(--f-en); font-style:italic; font-weight:600;
-  font-size: 1rem;
-  color:rgba(255,255,255,.85);
-}
-.widget--studio .num{
-  font-family: var(--f-en); font-style:italic; font-weight:600;
-  font-size: 1.7rem; color:#fff; line-height:1;
-}
-.widget--studio .lbl{
-  font-family: var(--f-mono); font-size:.55rem;
-  letter-spacing:.22em; color:rgba(255,255,255,.65);
-  text-transform: uppercase;
-}
-.widget--studio .pulse{
-  width:10px; height:10px; border-radius:50%;
-  background: var(--c-shu);
-  box-shadow: 0 0 0 0 rgba(200,57,28,.7);
-  animation: pulse 1.6s ease-in-out infinite;
-}
-.widget--release{
-  grid-column: span 2; grid-row: span 1;
-  display:flex; flex-direction:column; gap:.15rem; justify-content:center;
-  background: linear-gradient(135deg, rgba(184,137,58,.22) 0%, rgba(14,13,17,.4) 100%);
-}
-.widget--release .label{
-  font-family: var(--f-mono); font-size:.5rem;
-  letter-spacing:.25em; text-transform:uppercase;
-  color: rgba(255,255,255,.55);
-}
-.widget--release .name{
-  font-family: var(--f-mincho); font-weight:700;
-  font-size: .9rem; color:#fff;
-}
-.widget--release .status{
-  font-family: var(--f-mono); font-size:.6rem;
-  color: #FFB264; letter-spacing:.05em;
-}
-
-/* === アプリアイコン === */
 .app{
   display:flex; flex-direction:column; align-items:center; gap:.4rem;
   cursor:pointer;
   transition: transform 220ms var(--e-spring);
   -webkit-tap-highlight-color: transparent;
-  grid-column: span 1;
 }
 .app:active{ transform: scale(.92); }
 .app .icon{
-  width: 60px; height: 60px;
+  width: 58px; height: 58px;
   border-radius: 14px;
   background: var(--c-paper-2);
   position:relative; overflow:hidden;
@@ -710,47 +593,56 @@ section:not(.hero){
 }
 .app--active .icon{
   box-shadow:
-    0 8px 20px rgba(200,57,28,.5),
+    0 8px 20px rgba(200,57,28,.45),
     0 0 0 2.5px var(--c-shu),
     inset 0 1px 0 rgba(255,255,255,.45);
 }
+.app--placeholder{ opacity:.45; pointer-events:none; }
+.app--placeholder .icon{
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+  display:grid; place-items:center;
+  color: rgba(255,255,255,.3);
+  font-family: var(--f-mono); font-size:1rem;
+}
+.app--placeholder .label{ color: rgba(255,255,255,.4); }
+
 .app--badge .icon::after{
   content: attr(data-badge);
   position:absolute; top: -4px; right: -4px;
   background: var(--c-shu); color:#fff;
   font-family: var(--f-mono); font-weight:700;
-  font-size:.6rem; min-width: 18px; height:18px; padding: 0 4px;
-  border-radius: 9px; display:grid; place-items:center;
-  box-shadow: 0 0 0 2px #050507;
+  font-size:.6rem; min-width: 16px; height:16px; padding: 0 4px;
+  border-radius: 8px; display:grid; place-items:center;
+  box-shadow: 0 0 0 1.5px #000;
 }
 
 /* === Dock === */
 .phone__dock{
-  position:absolute; left: 14px; right:14px; bottom: 22px;
-  height: 64px; border-radius: 26px;
-  background: rgba(255,255,255,.13);
-  backdrop-filter: blur(22px);
-  border: 1px solid rgba(255,255,255,.16);
-  display:flex; align-items:center; justify-content:center;
-  gap: 18px;
-  padding: 0 18px;
+  position:absolute; left: 14px; right:14px; bottom: 18px;
+  height: 60px; border-radius: 22px;
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,.15);
+  display:flex; align-items:center; justify-content:space-around;
+  padding: 0 14px;
   z-index:4;
 }
 .dock-icon{
-  width:46px; height:46px; border-radius:12px;
+  width:42px; height:42px; border-radius:11px;
+  background: var(--c-paper-2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5);
   display:grid; place-items:center;
-  font-family: var(--f-en); font-style:italic; font-weight:700;
-  font-size: 1.1rem;
-  box-shadow:
-    0 4px 8px rgba(0,0,0,.3),
-    inset 0 1px 0 rgba(255,255,255,.4);
+  color: var(--c-ink); font-family: var(--f-en); font-style:italic; font-weight:700;
 }
-.dock-icon--mail{ background: linear-gradient(135deg, #C8391C, #861B07); color:#fff; }
-.dock-icon--web { background: linear-gradient(135deg, #F4EFE3, #DED3B6); color: var(--c-ink); }
+.dock-icon.dock-icon--mail{ background: linear-gradient(135deg, #C8391C, #861B07); color:#fff; }
+.dock-icon.dock-icon--gh  { background: linear-gradient(135deg, #2C2832, #0E0D11); color:#fff; }
+.dock-icon.dock-icon--web { background: linear-gradient(135deg, #1E5DA6, #1E3A5F); color:#fff; }
 
+/* === ホームインジケータ === */
 .phone__indicator{
-  position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
-  width: 130px; height:5px; border-radius:3px; background: rgba(255,255,255,.55);
+  position:absolute; bottom:6px; left:50%; transform:translateX(-50%);
+  width: 100px; height:4px; border-radius:2px; background: rgba(255,255,255,.5);
   z-index:5;
 }
 
@@ -760,7 +652,7 @@ section:not(.hero){
   display:flex; flex-direction:column;
   gap: 1.4rem;
   position:relative;
-  min-height: 800px;
+  min-height: 540px;
 }
 .detail__empty{
   margin: auto; text-align:center;
@@ -780,6 +672,7 @@ section:not(.hero){
   color: var(--c-ink-3); text-transform:uppercase;
 }
 
+/* 表示時のbentoグリッド */
 .detail__panel{
   display:none;
   grid-template-columns: 1.2fr 1fr;
@@ -809,7 +702,6 @@ section:not(.hero){
 .detail-card--hero .icon-large{
   width:72px; height:72px; border-radius:18px;
   box-shadow: 0 4px 14px rgba(14,13,17,.18), inset 0 1px 0 rgba(255,255,255,.5);
-  overflow:hidden;
 }
 .detail-card--hero h3{
   font-family: var(--f-mincho); font-size: 1.6rem; line-height:1.1;
@@ -841,6 +733,7 @@ section:not(.hero){
   background: rgba(200,57,28,.12); color: var(--c-shu);
   font-weight:700; font-size:.62rem; letter-spacing:.18em;
 }
+.detail-card--meta .status--dev{ background: rgba(30,93,166,.1); color: var(--c-ai); }
 
 .detail-card--features{ grid-column: 2 / 3; }
 .detail-card--features h4{
@@ -853,7 +746,6 @@ section:not(.hero){
   padding: .25rem 0; padding-left: 1.1rem;
   position:relative;
   border-bottom: 1px dotted var(--c-line);
-  line-height: 1.5;
 }
 .detail-card--features ul li:last-child{ border-bottom:0; }
 .detail-card--features ul li::before{
@@ -861,27 +753,19 @@ section:not(.hero){
   color: var(--c-shu); font-weight:700;
 }
 
-/* OVERVIEW を内側ヘッダーに変更（途切れ修正） */
 .detail-card--desc{
   grid-column: 1 / -1;
-  background: linear-gradient(180deg, var(--c-paper) 0%, rgba(244,239,227,.6) 100%);
-  padding: 1.2rem 1.4rem 1.4rem;
-}
-.detail-card--desc h4{
-  font-family: var(--f-mono); font-size:.6rem; letter-spacing:.3em;
-  color: var(--c-shu); text-transform:uppercase;
-  margin-bottom: .7rem;
-  display:flex; align-items:center; gap:.6rem;
-}
-.detail-card--desc h4::before{
-  content:""; width: 14px; height: 1px; background: var(--c-shu);
-}
-.detail-card--desc p{
   font-family: var(--f-mincho);
   font-size: 1rem; line-height: 1.85;
   color: var(--c-ink-2);
+  background: linear-gradient(180deg, var(--c-paper) 0%, rgba(244,239,227,.6) 100%);
 }
-
+.detail-card--desc::before{
+  content:"概 / OVERVIEW"; position:absolute;
+  top:-.55rem; left:.9rem; background: var(--c-paper); padding: 0 .5rem;
+  font-family: var(--f-mono); font-size:.55rem; letter-spacing:.3em;
+  color: var(--c-shu);
+}
 .detail-card--cta{
   grid-column: 1 / -1;
   display:flex; gap:.6rem; flex-wrap:wrap;
@@ -895,6 +779,7 @@ section:not(.hero){
   border:1px solid var(--c-ink); background: var(--c-paper-2);
   color: var(--c-ink);
   transition: all 250ms var(--e-out);
+  position:relative; overflow:hidden;
 }
 .detail-card--cta a.primary{
   background: var(--c-ink); color: var(--c-paper);
@@ -913,37 +798,31 @@ section:not(.hero){
   .detail-card--meta, .detail-card--features{ grid-column: 1 / -1; }
 }
 
-/* ===== CONTACT (控えめ) ===== */
-.contact__row{
-  display:flex; align-items:baseline;
-  gap: 1.5rem;
-  padding: 1.2rem 0;
-  border-top: 1px solid var(--c-line);
-  border-bottom: 1px solid var(--c-line);
-  flex-wrap: wrap;
+/* ===== CONTACT ===== */
+.contact__email{
+  display:grid; grid-template-columns: auto 1fr auto;
+  gap: 2rem; align-items:center;
+  padding: 2rem 2.5rem;
+  background: var(--c-paper-2);
+  border:1px solid var(--c-ink);
+  transition: all 400ms var(--e-out);
+  position:relative; overflow:hidden;
 }
-.contact__row .lbl{
-  font-family: var(--f-mono); font-size:.65rem; letter-spacing:.3em;
-  color: var(--c-ink-3); text-transform:uppercase;
-  min-width: 80px;
+.contact__email::before{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(135deg, var(--c-shu), var(--c-shu-warm));
+  transform: translateX(-100%);
+  transition: transform 500ms var(--e-out);
+  z-index:0;
 }
-.contact__row a{
-  font-family: var(--f-en); font-style:italic;
-  font-size: 1.3rem;
-  color: var(--c-ink);
-  position:relative;
-  border-bottom: 1px solid var(--c-line);
-  transition: color 250ms, border-color 250ms;
-}
-.contact__row a:hover{
-  color: var(--c-shu);
-  border-bottom-color: var(--c-shu);
-}
-.contact__row .note{
-  margin-left: auto;
-  font-family: var(--f-mono); font-size:.62rem; letter-spacing:.25em;
-  color: var(--c-ink-3); text-transform:uppercase;
-}
+.contact__email:hover::before{ transform: translateX(0); }
+.contact__email:hover{ color: var(--c-paper); border-color: var(--c-shu-deep); }
+.contact__email > *{ position:relative; z-index:1; }
+.contact__email-label{ font-family: var(--f-mono); font-size:.7rem; letter-spacing:.3em; color: var(--c-shu); transition: color 300ms; }
+.contact__email:hover .contact__email-label{ color: var(--c-paper); }
+.contact__email-addr{ font-family: var(--f-en); font-style:italic; font-size: clamp(1.2rem, .9rem + 1vw, 1.8rem); }
+.contact__email-arrow{ font-size:1.5rem; color: var(--c-shu); transition: all 300ms; }
+.contact__email:hover .contact__email-arrow{ color: var(--c-paper); transform: translateX(8px); }
 
 /* ===== フッター ===== */
 .footer{
@@ -1027,8 +906,7 @@ section:not(.hero){
 /* リデュースモーション */
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{ animation-duration:.01ms !important; transition-duration:.01ms !important; }
-  .slash-btn.is-burning, .slash-btn{ animation:none; }
-  .slash-flame, .ember{ display:none; }
+  .slash-btn.is-burning{ animation:none; }
   .phone__device{ transform:none; }
 }
 </style>
@@ -1066,54 +944,51 @@ section:not(.hero){
 <div class="crosshair crosshair--bl"></div>
 <div class="crosshair crosshair--br"></div>
 
+<!-- 斬撃エフェクト -->
 <div class="slash-fx" aria-hidden="true"></div>
 
 <!-- ===================== ヒーロー ===================== -->
 <section class="hero">
 
+  <!-- 左マージナリア -->
   <aside class="hero__margin-l" aria-hidden="true">
+    <span>FILE 001 / V — 6</span>
     <b>個 人 開 発 ス タ ジ オ</b>
+    <span>Press / to ignite</span>
   </aside>
 
   <div class="hero__main">
+    <div class="hero__meta">
+      <span>Slash-Kagari / individual studio</span>
+      <span>Est. MMXXVI</span>
+      <span>Tokyo, JP</span>
+    </div>
+
     <h1 class="hero__title">
-      <span class="slash-wrap">
-        <span class="slash-flame" aria-hidden="true"></span>
-        <span class="embers" aria-hidden="true">
-          <span class="ember" style="--lx:30%; --dx:-6px; --dur:3.0s; --delay:.0s"></span>
-          <span class="ember" style="--lx:55%; --dx:8px; --dur:3.6s; --delay:.7s"></span>
-          <span class="ember" style="--lx:70%; --dx:-4px; --dur:2.8s; --delay:1.4s"></span>
-          <span class="ember" style="--lx:42%; --dx:10px; --dur:3.4s; --delay:2.1s"></span>
-        </span>
-        <button class="slash-btn" id="slash-btn" aria-label="斬撃を放つ" type="button">/</button>
-      </span><span class="kagari-text">Kagari</span>
+      <button class="slash-btn" id="slash-btn" aria-label="斬撃を放つ" type="button">/</button><span class="kagari-text">Kagari</span>
     </h1>
     <p class="hero__tag-ja">篝に必要な灯りを。</p>
     <p class="hero__tag-en">Light for the watchfire.</p>
 
-    <!-- Windows コマンドプロンプト風 -->
+    <!-- ライブコンソール -->
     <div class="console" role="status" aria-label="studio status">
       <div class="console__bar">
-        <div class="console__title">
-          <span class="console__title-icon">&gt;_</span>
-          <span>Command Prompt — kagari</span>
-        </div>
-        <div class="console__winbtns" aria-hidden="true">
-          <i>—</i><i>☐</i><i class="x">×</i>
-        </div>
+        <div class="console__dots"><i></i><i></i><i></i></div>
+        <span>kagari@studio:~ — status</span>
+        <span id="uptime">UP — —</span>
       </div>
       <div class="console__body">
-        <span class="console__line"><span class="dim">Microsoft Windows [Version 10.0.26200]</span></span>
-        <span class="console__line"><span class="dim">(c) /Kagari Studio. All crafts reserved.</span></span>
-        <span class="console__line">&nbsp;</span>
-        <span class="console__line"><span class="path">C:\Users\kagari</span><span class="gt">&gt;</span> <span id="typed"></span><span class="console__cursor"></span></span>
-        <span class="console__line"><span class="path">C:\Users\kagari</span><span class="gt">&gt;</span> studio --status</span>
-        <span class="console__line">  <span class="key">released</span> = <span class="num">1</span>   <span class="key">in_progress</span> = <span class="num">1</span></span>
-        <span class="console__line">  <span class="key">discipline</span> = <span class="val">"solo dev / craft"</span></span>
+        <span class="console__prompt">$</span>
+        <span class="console__line"><span id="typed"></span><span class="console__cursor"></span></span>
+        <span class="console__prompt">›</span>
+        <span class="console__line"><span class="k">released</span> = <span class="v">1</span> · <span class="k">in_progress</span> = <span class="v">1</span> · <span class="k">backlog</span> = <span class="v">∞</span></span>
+        <span class="console__prompt">›</span>
+        <span class="console__line"><span class="k">discipline</span> = <span class="v">"solo dev / craft"</span></span>
       </div>
     </div>
   </div>
 
+  <!-- 右マージナリア -->
   <aside class="hero__margin-r" aria-hidden="true">
     <span class="coord">35.6762° N · 139.6503° E</span>
     <div class="stamp">/篝<br>印</div>
@@ -1124,16 +999,21 @@ section:not(.hero){
 <section id="about">
   <div class="section__head">
     <div class="section__num">01 / About</div>
-    <h2 class="section__title"><span>/Kagariの由来</span><em>Why the watchfire</em></h2>
-    <div class="section__rule">read time · 01:00</div>
+    <h2 class="section__title"><span>篝の由来</span><em>Why the watchfire</em></h2>
+    <div class="section__rule">read time · 02:00</div>
   </div>
   <div class="about__grid">
     <div class="about__lead"><p>過剰な情報の時代に、<em>必要な灯り</em>だけを。</p></div>
     <div class="about__body">
-      <p><strong>「/Kagari」</strong>。篝（かがり）は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
-      <p>情報もサービスも溢れる今、使う人の生活になじむものを作りたい。</p>
-      <p>一人の開発者で、納得のいくものを世に出す。それが /Kagari です。</p>
+      <p>「篝（かがり）」は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
+      <p>情報もサービスも溢れる今、使う人の生活にそっと馴染み、日々を少しだけ整えるような道具を作りたい。派手さではなく、手触りと確かさを。</p>
+      <p>一人の開発者が、丁寧に時間をかけて、納得のいくものだけを世に出す。それが /Kagari の仕事です。</p>
     </div>
+    <ul class="about__principles">
+      <li data-n="01"><span>Principle 01</span><p>小さな不便を、手触りのよい道具で照らす</p></li>
+      <li data-n="02"><span>Principle 02</span><p>使う人の生活にそっと馴染むものを</p></li>
+      <li data-n="03"><span>Principle 03</span><p>納得のいくものだけを、ひとつずつ</p></li>
+    </ul>
   </div>
 </section>
 
@@ -1152,8 +1032,8 @@ section:not(.hero){
     </p>
     <div class="products__hint">
       <b>↘ TAP TO OPEN</b>
-      <span>01 active</span>
-      <span>updated 2026-04-26</span>
+      <span>02 active · 04 vacant</span>
+      <span>updated 2026-04-25</span>
     </div>
   </div>
 
@@ -1162,48 +1042,19 @@ section:not(.hero){
     <!-- スマホモック -->
     <div class="phone">
       <div class="phone__device" role="application" aria-label="製品ホーム画面">
-        <div class="phone__island" aria-hidden="true"></div>
-
+        <div class="phone__notch" aria-hidden="true"></div>
         <div class="phone__statusbar" aria-hidden="true">
           <span id="phone-clock">9:41</span>
-          <span class="right">
-            <svg width="17" height="11" viewBox="0 0 17 11" fill="white"><rect x="0" y="7" width="3" height="4" rx="0.5"/><rect x="4.5" y="5" width="3" height="6" rx="0.5"/><rect x="9" y="2.5" width="3" height="8.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="11" rx="0.5"/></svg>
-            <svg width="15" height="11" viewBox="0 0 15 11" fill="white"><path d="M7.5 1C5 1 2.6 1.9 .8 3.6L7.5 10l6.7-6.4C12.4 1.9 10 1 7.5 1z"/></svg>
-            <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="white" stroke-opacity=".4"/><rect x="2" y="2" width="18" height="7" rx="1.5" fill="white"/><rect x="22.5" y="3.5" width="2" height="4" rx="1" fill="white" fill-opacity=".4"/></svg>
-          </span>
+          <span class="right">●●● 5G ▮▮▮</span>
         </div>
-
         <div class="phone__wallpaper" aria-hidden="true"></div>
 
         <div class="phone__home">
 
-          <!-- 大型クロックウィジェット (2x2) -->
-          <div class="widget widget--clock">
-            <span class="label">JST · TOKYO</span>
-            <span class="time" id="phone-time-big">--:--</span>
-            <span class="date" id="phone-date">— —</span>
-          </div>
-
-          <!-- スタジオウィジェット (2x1) -->
-          <div class="widget widget--studio">
-            <div>
-              <div class="head">/Kagari</div>
-              <div class="num">01</div>
-              <div class="lbl">released</div>
-            </div>
-            <span class="pulse"></span>
-          </div>
-
-          <!-- 次のリリース (2x1) -->
-          <div class="widget widget--release">
-            <span class="label">Next ─ in development</span>
-            <span class="name">未公開プロジェクト</span>
-            <span class="status">○ coming soon</span>
-          </div>
-
-          <!-- Only Task アイコン -->
+          <!-- Only Task -->
           <button class="app app--badge" data-app="only-task" data-badge="1" aria-label="Only Task の詳細を開く">
             <span class="icon">
+              <!-- カスタムSVG: 朱の矩形＋白いチェック -->
               <svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true">
                 <defs>
                   <linearGradient id="ot-bg" x1="0" y1="0" x2="1" y2="1">
@@ -1221,11 +1072,46 @@ section:not(.hero){
             <span class="label">Only Task</span>
           </button>
 
+          <!-- Life in Seconds -->
+          <button class="app" data-app="life-in-seconds" aria-label="Life in Seconds の詳細を開く">
+            <span class="icon">
+              <svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true">
+                <defs>
+                  <linearGradient id="ls-bg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#1E3A5F"/><stop offset="1" stop-color="#0E1A2C"/>
+                  </linearGradient>
+                  <linearGradient id="ls-sun" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#E0BB73"/><stop offset="1" stop-color="#C8391C"/>
+                  </linearGradient>
+                </defs>
+                <rect width="64" height="64" rx="14" fill="url(#ls-bg)"/>
+                <!-- 砂時計 -->
+                <path d="M22 14 H42 L34 30 L42 50 H22 L30 30 Z" fill="rgba(224,187,115,0.15)" stroke="#E0BB73" stroke-width="1.5" stroke-linejoin="round"/>
+                <!-- 上の砂 -->
+                <path d="M24 16 H40 L33 28 H31 Z" fill="url(#ls-sun)" opacity=".9"/>
+                <!-- 下の砂(溜まり) -->
+                <path d="M24 48 H40 L36 40 H28 Z" fill="url(#ls-sun)"/>
+                <!-- 中央の落下 -->
+                <line x1="32" y1="30" x2="32" y2="40" stroke="#E0BB73" stroke-width="1" stroke-dasharray="2 2"/>
+                <!-- 秒目盛 -->
+                <line x1="14" y1="32" x2="18" y2="32" stroke="#E0BB73" stroke-width="1"/>
+                <line x1="46" y1="32" x2="50" y2="32" stroke="#E0BB73" stroke-width="1"/>
+              </svg>
+            </span>
+            <span class="label">Life Sec.</span>
+          </button>
+
+          <!-- 空き枠 -->
+          <button class="app app--placeholder" disabled><span class="icon">P-003</span><span class="label">— —</span></button>
+          <button class="app app--placeholder" disabled><span class="icon">P-004</span><span class="label">— —</span></button>
+          <button class="app app--placeholder" disabled><span class="icon">P-005</span><span class="label">— —</span></button>
+          <button class="app app--placeholder" disabled><span class="icon">P-006</span><span class="label">— —</span></button>
         </div>
 
         <!-- Dock -->
         <div class="phone__dock" aria-hidden="true">
           <a class="dock-icon dock-icon--mail" href="mailto:slash.kagari@outlook.com" title="Email">@</a>
+          <a class="dock-icon dock-icon--gh" href="https://github.com/Slash-Kagari" target="_blank" rel="noopener" title="GitHub">G</a>
           <a class="dock-icon dock-icon--web" href="#contact" title="Contact">/K</a>
         </div>
 
@@ -1242,6 +1128,7 @@ section:not(.hero){
         <p>左のアイコンを押すと、製品の詳細・主な機能・ステータスがここに展開されます。</p>
       </div>
 
+      <!-- Only Task -->
       <div class="detail__panel" data-detail="only-task">
         <div class="detail-card detail-card--hero">
           <span class="icon-large">
@@ -1261,7 +1148,9 @@ section:not(.hero){
         <div class="detail-card detail-card--meta">
           <dl>
             <dt>Status</dt><dd><span class="status">RELEASED</span></dd>
-            <dt>Platform</dt><dd>Android</dd>
+            <dt>Platform</dt><dd>Android · iOS (近日)</dd>
+            <dt>Stack</dt><dd>Expo / RN · Supabase</dd>
+            <dt>Pricing</dt><dd>Free + Premium</dd>
             <dt>Released</dt><dd>2026 / Spring</dd>
           </dl>
         </div>
@@ -1269,23 +1158,70 @@ section:not(.hero){
         <div class="detail-card detail-card--features">
           <h4>Key Features</h4>
           <ul>
-            <li>「今一つやるべき」タスクだけを表示</li>
-            <li>タスクの完了時間タイマー</li>
-            <li>机の上に置いても邪魔しないデザイン</li>
-            <li>3秒で起動、3秒で記録</li>
-            <li>タスク実行の実績を記録</li>
+            <li>「今日やる1つ」だけが残る画面</li>
+            <li>触覚的なジェスチャ完了</li>
+            <li>静かな通知設計（焦らせない）</li>
+            <li>3秒で起動・3秒で記録</li>
           </ul>
         </div>
 
         <div class="detail-card detail-card--desc">
-          <h4>Overview / 概 要</h4>
-          <p>多すぎるToDoは、もう要らない。Only Task は「今一つやるべき」タスクを完了させるためのアプリです。後回しはやめて、タスク完了を重視。過去のタスクの分析も可能です。</p>
+          多すぎるToDoは、もう要らない。Only Task は「今日、これだけ」をひとつ決める道具です。
+          リストを長くする代わりに、選び抜く時間を渡す。終えたら静かに消える、最小限の達成感を設計しました。
         </div>
 
         <div class="detail-card detail-card--cta">
           <a class="primary" href="products/only-task.html">製品ページ</a>
           <a href="legal/only-task-privacy.html">プライバシー</a>
           <a href="legal/only-task-terms.html">利用規約</a>
+        </div>
+      </div>
+
+      <!-- Life in Seconds -->
+      <div class="detail__panel" data-detail="life-in-seconds">
+        <div class="detail-card detail-card--hero">
+          <span class="icon-large">
+            <svg viewBox="0 0 64 64" width="72" height="72" aria-hidden="true">
+              <rect width="64" height="64" rx="16" fill="#1E3A5F"/>
+              <path d="M22 14 H42 L34 30 L42 50 H22 L30 30 Z" fill="rgba(224,187,115,0.15)" stroke="#E0BB73" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M24 16 H40 L33 28 H31 Z" fill="#E0BB73"/>
+              <path d="M24 48 H40 L36 40 H28 Z" fill="#C8391C"/>
+              <line x1="32" y1="30" x2="32" y2="40" stroke="#E0BB73" stroke-width="1" stroke-dasharray="2 2"/>
+            </svg>
+          </span>
+          <h3>Life in Seconds<small>your life, counted in seconds</small></h3>
+          <span class="pid">P-002</span>
+        </div>
+
+        <div class="detail-card detail-card--meta">
+          <dl>
+            <dt>Status</dt><dd><span class="status status--dev">IN PROGRESS</span></dd>
+            <dt>Platform</dt><dd>Flutter (iOS / Android)</dd>
+            <dt>Stack</dt><dd>Flutter · Riverpod · Hive</dd>
+            <dt>Achievements</dt><dd>295 個実装済</dd>
+            <dt>Beta</dt><dd>2026 Q3 予定</dd>
+          </dl>
+        </div>
+
+        <div class="detail-card detail-card--features">
+          <h4>Key Features</h4>
+          <ul>
+            <li>人生を秒数で可視化するライブカウンタ</li>
+            <li>自分の年齢で「残り時間」を意識する設計</li>
+            <li>295個の実績で日々を後押し</li>
+            <li>ノートとカレンダー連携（予定）</li>
+          </ul>
+        </div>
+
+        <div class="detail-card detail-card--desc">
+          時間は、いつも"日"単位で語られる。けれど実際にこぼれていくのは、もっと細かい単位。
+          Life in Seconds は、生まれてからの秒数を静かに数え、これからの秒数も同じ精度で見せる時計です。
+          焦らせるためではなく、今この一秒を、すこし大切に置きなおすために。
+        </div>
+
+        <div class="detail-card detail-card--cta">
+          <a class="primary" href="products/life-in-seconds.html">製品ページ</a>
+          <a href="#">開発ノート (準備中)</a>
         </div>
       </div>
 
@@ -1300,11 +1236,11 @@ section:not(.hero){
     <h2 class="section__title"><span>連絡先</span><em>Get in touch</em></h2>
     <div class="section__rule">reply within 48h</div>
   </div>
-  <div class="contact__row">
-    <span class="lbl">Email</span>
-    <a href="mailto:slash.kagari@outlook.com">slash.kagari@outlook.com</a>
-    <span class="note">お仕事 / お問い合わせ</span>
-  </div>
+  <a class="contact__email" href="mailto:slash.kagari@outlook.com">
+    <span class="contact__email-label">EMAIL</span>
+    <span class="contact__email-addr">slash.kagari@outlook.com</span>
+    <span class="contact__email-arrow">→</span>
+  </a>
 </section>
 
 <footer class="footer">
@@ -1314,9 +1250,9 @@ section:not(.hero){
       <p class="footer__tag">Light for the watchfire.</p>
     </div>
     <nav class="footer__nav">
-      <div><h4>Products</h4><ul><li><a href="products/only-task.html">Only Task</a></li></ul></div>
+      <div><h4>Products</h4><ul><li><a href="products/only-task.html">Only Task</a></li><li><a href="products/life-in-seconds.html">Life in Seconds</a></li></ul></div>
       <div><h4>Legal</h4><ul><li><a href="legal/only-task-privacy.html">プライバシー</a></li><li><a href="legal/only-task-terms.html">利用規約</a></li><li><a href="legal/only-task-tokushoho.html">特商法</a></li></ul></div>
-      <div><h4>Contact</h4><ul><li><a href="mailto:slash.kagari@outlook.com">Email</a></li></ul></div>
+      <div><h4>Link</h4><ul><li><a href="https://github.com/Slash-Kagari" target="_blank" rel="noopener">GitHub</a></li><li><a href="mailto:slash.kagari@outlook.com">Email</a></li></ul></div>
     </nav>
   </div>
   <div class="footer__bottom">
@@ -1330,7 +1266,7 @@ section:not(.hero){
   'use strict';
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // カーソル追従の灯り
+  // ========== カーソル追従の灯り ==========
   const glow = document.querySelector('.cursor-glow');
   let gx = innerWidth/2, gy = innerHeight/2, tx = gx, ty = gy;
   addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
@@ -1340,29 +1276,30 @@ section:not(.hero){
     requestAnimationFrame(loop);
   })();
 
-  // ライブ時計
+  // ========== ライブ時計 ==========
   const liveTime = document.getElementById('live-time');
   const phoneClock = document.getElementById('phone-clock');
-  const phoneTimeBig = document.getElementById('phone-time-big');
-  const phoneDate = document.getElementById('phone-date');
-  const days = ['日','月','火','水','木','金','土'];
+  const upTime = document.getElementById('uptime');
+  const start = Date.now();
   function pad(n){ return String(n).padStart(2,'0'); }
   function tick(){
     const d = new Date();
     const hh = pad(d.getHours()), mm = pad(d.getMinutes()), ss = pad(d.getSeconds());
     if (liveTime) liveTime.textContent = `${hh}:${mm}:${ss}`;
     if (phoneClock) phoneClock.textContent = `${hh}:${mm}`;
-    if (phoneTimeBig) phoneTimeBig.textContent = `${hh}:${mm}`;
-    if (phoneDate) phoneDate.textContent = `${d.getMonth()+1}月${d.getDate()}日 (${days[d.getDay()]})`;
+    if (upTime){
+      const up = Math.floor((Date.now()-start)/1000);
+      upTime.textContent = `UP ${pad(Math.floor(up/3600))}:${pad(Math.floor(up/60)%60)}:${pad(up%60)}`;
+    }
   }
   tick(); setInterval(tick, 1000);
 
-  // コンソール・タイピング
+  // ========== コンソール・タイピング ==========
   const typed = document.getElementById('typed');
   const lines = [
-    'kagari --watch',
-    'kagari list --products',
-    'echo "necessary light"'
+    'kagari --status --since 2026-04-25',
+    'kagari list --products --filter active',
+    'kagari watch --signal "necessary light"'
   ];
   let li = 0, ci = 0, deleting = false;
   function typeLoop(){
@@ -1379,7 +1316,7 @@ section:not(.hero){
   }
   if (!reduced) typeLoop();
 
-  // 「/」斬撃
+  // ========== 「/」斬撃 ==========
   const slashBtn = document.getElementById('slash-btn');
   const fx = document.querySelector('.slash-fx');
   function triggerSlash(){
@@ -1420,10 +1357,11 @@ section:not(.hero){
     setTimeout(triggerSlash, 1400);
   }
 
-  // アプリ詳細展開
+  // ========== アプリ詳細展開 ==========
   const apps = document.querySelectorAll('.app[data-app]');
   const panels = document.querySelectorAll('.detail__panel');
   const empty = document.getElementById('detail-empty');
+
   function openApp(key){
     apps.forEach(a => a.classList.toggle('app--active', a.dataset.app === key));
     let opened = false;
@@ -1447,6 +1385,8 @@ section:not(.hero){
       }
     });
   });
+
+  // 初期は最初のアプリを開いておく(空白を避ける)
   if (apps.length){
     setTimeout(()=> openApp(apps[0].dataset.app), 600);
   }

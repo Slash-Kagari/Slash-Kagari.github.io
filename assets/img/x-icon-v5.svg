@@ -1,0 +1,149 @@
+<!--
+  /Kagari — X(Twitter)アイコン V5版（中間 / 円相+斬撃）
+  サイズ: 400×400px
+  コンセプト:
+    - 和紙ベージュの正方形 + 大きな墨の円相(ensō)
+    - 円相を朱の太い「/」が一筆で斬る
+    - 右下に朱の印章「篝」 — 左下に墨の落款
+    - 紋として小さくしてもシルエットが残る
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bg5" cx="80%" cy="15%" r="100%">
+      <stop offset="0%"  stop-color="#F2D9A8"/>
+      <stop offset="40%" stop-color="#E5D4B0"/>
+      <stop offset="100%" stop-color="#CFB98A"/>
+    </radialGradient>
+
+    <!-- 夕日の光オーバーレイ -->
+    <radialGradient id="sun5" cx="80%" cy="18%" r="55%">
+      <stop offset="0%"  stop-color="#D85A2E" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#C99648" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#C99648" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- 円相の墨グラデ(濃淡) -->
+    <linearGradient id="ink5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%"   stop-color="#1C1712"/>
+      <stop offset="55%"  stop-color="#3E362C"/>
+      <stop offset="100%" stop-color="#1C1712"/>
+    </linearGradient>
+
+    <!-- 斬撃の朱グラデ(始点が濃く、終点でかすれる) -->
+    <linearGradient id="slash5" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#7A1E08"/>
+      <stop offset="20%"  stop-color="#B53A1D"/>
+      <stop offset="60%"  stop-color="#D85A2E"/>
+      <stop offset="90%"  stop-color="#E07A4A" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#E07A4A" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- 朱の印章用テクスチャ -->
+    <pattern id="stampTex" x="0" y="0" width="3" height="3" patternUnits="userSpaceOnUse">
+      <rect width="3" height="3" fill="#B53A1D"/>
+      <circle cx="1" cy="1" r="0.5" fill="#F2D9A8" opacity="0.25"/>
+    </pattern>
+
+    <!-- 紙のテクスチャ -->
+    <pattern id="paper5" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+      <rect width="6" height="6" fill="transparent"/>
+      <circle cx="1" cy="1" r="0.4" fill="#1C1712" opacity="0.07"/>
+      <circle cx="4" cy="3" r="0.3" fill="#B53A1D" opacity="0.06"/>
+    </pattern>
+  </defs>
+
+  <!-- 背景: 和紙 -->
+  <rect width="400" height="400" fill="url(#bg5)"/>
+  <rect width="400" height="400" fill="url(#paper5)"/>
+  <rect width="400" height="400" fill="url(#sun5)"/>
+
+  <!-- 円相(ensō): 一筆書きの墨の輪 — 下部にわずかな切れ目 -->
+  <!--
+    描き方: 太い円弧を1本。終端を細く、始端を太く。
+    中心(200,210), 半径140
+  -->
+  <path d="
+    M 200 70
+    A 140 140 0 1 1 152 340
+    "
+    fill="none"
+    stroke="url(#ink5)"
+    stroke-width="32"
+    stroke-linecap="round"/>
+
+  <!-- 円相の内側の薄い円(余韻) -->
+  <circle cx="200" cy="210" r="118" fill="none" stroke="#1C1712" stroke-width="0.8" opacity="0.25" stroke-dasharray="2 5"/>
+
+  <!-- 墨の飛沫(円相のかすれ) -->
+  <g fill="#1C1712" opacity="0.6">
+    <circle cx="148" cy="346" r="3"/>
+    <circle cx="138" cy="354" r="2"/>
+    <circle cx="160" cy="352" r="1.5"/>
+    <circle cx="125" cy="345" r="1.2"/>
+    <circle cx="195" cy="64"  r="2"/>
+    <circle cx="208" cy="60"  r="1.4"/>
+  </g>
+
+  <!-- 朱の斬撃「/」 — 円相を斜めに断ち切る一筆 -->
+  <!-- 角度を出すため線を回転 -->
+  <g transform="rotate(-26 200 210)">
+    <!-- 外側のにじみ(影) -->
+    <rect x="20" y="194" width="360" height="40" fill="url(#slash5)" opacity="0.25" rx="20"/>
+    <!-- 本体: 筆ストローク風(始点厚→終点細) -->
+    <path d="
+      M 28 214
+      L 372 200
+      L 376 218
+      L 30 230
+      Z"
+      fill="url(#slash5)"/>
+    <!-- 芯の明るい線 -->
+    <path d="M 38 215 L 360 209" stroke="#FFE4B0" stroke-width="2.5" opacity="0.55" stroke-linecap="round"/>
+    <!-- 終端のかすれ(粒) -->
+    <g fill="#D85A2E" opacity="0.7">
+      <circle cx="375" cy="206" r="2"/>
+      <circle cx="382" cy="208" r="1.4"/>
+      <circle cx="370" cy="220" r="1.6"/>
+      <circle cx="385" cy="214" r="1"/>
+    </g>
+  </g>
+
+  <!-- 右下: 朱の印章「篝」 -->
+  <g transform="translate(298, 296)">
+    <rect x="0" y="0" width="72" height="72" fill="url(#stampTex)" stroke="#7A1E08" stroke-width="1.5"/>
+    <rect x="3" y="3" width="66" height="66" fill="none" stroke="#F2D9A8" stroke-width="1.2"/>
+    <text x="36" y="54"
+          font-family="'Shippori Mincho','Noto Serif JP',serif"
+          font-size="44"
+          font-weight="900"
+          text-anchor="middle"
+          fill="#F2D9A8">篝</text>
+  </g>
+
+  <!-- 左下: 墨の落款(英字署名) -->
+  <g transform="translate(28, 360)">
+    <text font-family="'JetBrains Mono',monospace"
+          font-size="11"
+          font-weight="600"
+          letter-spacing="3"
+          fill="#1C1712"
+          opacity="0.78">SLASH-KAGARI</text>
+    <text y="14"
+          font-family="'JetBrains Mono',monospace"
+          font-size="7.5"
+          letter-spacing="2.5"
+          fill="#B53A1D"
+          opacity="0.85">EST · MMXXVI</text>
+  </g>
+
+  <!-- 左上: 縦書き「篝火」 -->
+  <g transform="translate(36, 38)" font-family="'Shippori Mincho','Noto Serif JP',serif" fill="#1C1712">
+    <text x="0" y="22" font-size="22" font-weight="700" opacity="0.78">篝</text>
+    <text x="0" y="50" font-size="22" font-weight="700" opacity="0.78">火</text>
+    <line x1="-6" y1="0" x2="-6" y2="58" stroke="#B53A1D" stroke-width="1.5" opacity="0.7"/>
+  </g>
+
+  <!-- 額縁(極細) -->
+  <rect x="10" y="10" width="380" height="380" fill="none" stroke="#1C1712" stroke-width="1.5" opacity="0.55"/>
+  <rect x="16" y="16" width="368" height="368" fill="none" stroke="#B53A1D" stroke-width="0.6" opacity="0.5"/>
+</svg>

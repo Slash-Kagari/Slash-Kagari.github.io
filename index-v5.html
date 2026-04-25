@@ -1,0 +1,790 @@
+<!--
+  /Kagari — V5 (中間トーン / 夕暮れの工房 × エディトリアル・ベント)
+  方向性: 和紙ベージュを主、炭墨を従、アクセントに夕日の朱と淡い金。
+          マガジン風のアシンメトリーなベントグリッド。縦書きの日本語を装飾に。
+          ワクワク感は ① 墨の滲みで浮かぶ見出し ② 大小を混ぜたベントタイル
+          ③ 夕焼けグラデの背景光(ゆっくり流れる)。
+  役割: 比較用サンプル。採用するなら index.html に差し替え。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/Kagari — 篝に必要な灯りを。</title>
+<meta name="description" content="個人開発者 /Kagari の公式サイト。必要な灯りだけを、丁寧に。" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+/* ===================== トークン ===================== */
+:root {
+  --c-paper:    #EDE2CE;   /* 生成り(本紙) */
+  --c-paper-2:  #E3D6BC;   /* 和紙の陰 */
+  --c-paper-3:  #D5C4A3;   /* より深い紙 */
+  --c-paper-4:  #3A3026;   /* 炭に染みた和紙 */
+  --c-sumi:     #1C1712;   /* 墨 */
+  --c-sumi-2:   #3E362C;
+  --c-sumi-3:   #6B5E4E;
+  --c-shu:      #B53A1D;   /* 夕日の朱 */
+  --c-shu-warm: #D85A2E;
+  --c-kin:      #C99648;   /* 金 */
+  --c-kin-soft: #E0B87A;
+  --c-ai:       #384C6A;   /* 藍(脇役) */
+
+  --f-mincho: "Shippori Mincho","Noto Serif JP",serif;
+  --f-sans:   "Noto Sans JP",system-ui,sans-serif;
+  --f-en:     "Cormorant Garamond","Times New Roman",serif;
+  --f-mono:   "JetBrains Mono",ui-monospace,monospace;
+
+  --e-out:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+body{
+  background: var(--c-paper);
+  color: var(--c-sumi);
+  font-family: var(--f-sans);
+  font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.05rem);
+  line-height: 1.9;
+  overflow-x: hidden;
+  position:relative;
+  min-height:100vh;
+}
+a{ color:inherit; text-decoration:none; }
+ul{ list-style:none; }
+img{ display:block; max-width:100%; }
+button{ font:inherit; cursor:pointer; border:0; background:none; color:inherit; padding:0; }
+
+/* 夕暮れの背景光(ゆっくり流れる) */
+body::before{
+  content:""; position:fixed; inset:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 85% 12%, rgba(216,90,46,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 45% at 10% 85%, rgba(201,150,72,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(56,76,106,0.08) 0%, transparent 60%);
+  animation: driftGlow 18s ease-in-out infinite alternate;
+  pointer-events:none;
+  z-index:0;
+}
+@keyframes driftGlow{
+  0%{ transform: translate(0,0) scale(1); }
+  100%{ transform: translate(-2%, 1%) scale(1.06); }
+}
+
+/* 紙のテクスチャ */
+body::after{
+  content:""; position:fixed; inset:0;
+  background-image:
+    radial-gradient(rgba(28,23,18,0.04) 1px, transparent 1.2px),
+    radial-gradient(rgba(181,58,29,0.025) 1px, transparent 1px);
+  background-size: 4px 4px, 11px 11px;
+  pointer-events:none;
+  z-index:1;
+  mix-blend-mode: multiply;
+}
+
+main, nav, footer{ position:relative; z-index:2; }
+
+/* ===================== ナビ ===================== */
+.nav{
+  position:fixed; top:0; left:0; right:0;
+  display:flex; justify-content:space-between; align-items:center;
+  padding:1.1rem 2.5rem;
+  z-index:100;
+  background: rgba(237,226,206,0.82);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(28,23,18,0.12);
+}
+.nav__brand{ font-family:var(--f-en); font-size:1.45rem; letter-spacing:0.01em; color:var(--c-sumi); }
+.nav__brand .s{ color:var(--c-shu); font-weight:700; font-size:1.2em; }
+.nav__brand .n{ font-style:italic; font-weight:500; }
+.nav__menu{ display:flex; gap:2rem; font-family:var(--f-mono); font-size:0.72rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--c-sumi-2); }
+.nav__menu a{ position:relative; padding:0.3rem 0; transition:color 200ms; }
+.nav__menu a::after{ content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--c-shu); transition:width 300ms var(--e-out); }
+.nav__menu a:hover{ color:var(--c-shu); }
+.nav__menu a:hover::after{ width:100%; }
+
+/* ===================== ヒーロー (縦書きアクセント付き) ===================== */
+.hero{
+  position:relative;
+  min-height: 100vh;
+  padding: 7rem 2.5rem 3rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 3rem;
+}
+.hero__main{ align-self:center; }
+.hero__meta{
+  display:flex; gap:2rem; flex-wrap:wrap;
+  font-family:var(--f-mono); font-size:0.66rem;
+  letter-spacing:0.25em; color:var(--c-sumi-3);
+  text-transform:uppercase;
+  margin-bottom:2.5rem;
+  padding-bottom:1rem;
+  border-bottom:1px dashed rgba(28,23,18,0.2);
+}
+.hero__meta span::before{ content:"● "; color:var(--c-shu); }
+
+.hero__title{
+  font-family: var(--f-en);
+  font-size: clamp(4.5rem, 2.8rem + 9vw, 12rem);
+  font-weight: 500;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  display:flex; align-items:baseline; gap:0.02em;
+  margin-bottom: 2rem;
+  position:relative;
+}
+.hero__title .s{
+  color:var(--c-shu);
+  font-weight:700;
+  font-size:1.15em;
+  text-shadow: 0 4px 24px rgba(181,58,29,0.25);
+}
+.hero__title .w{ font-style:italic; color:var(--c-sumi); }
+
+/* 墨滲みのヒーロー装飾 */
+.hero__ink{
+  position:absolute;
+  top: -1rem; left: -1rem;
+  width: 260px; height: 260px;
+  pointer-events:none;
+  z-index:-1;
+}
+.hero__ink path{
+  fill: var(--c-sumi);
+  opacity: 0.06;
+  animation: inkBreath 6s ease-in-out infinite alternate;
+}
+@keyframes inkBreath{
+  0%{ transform: scale(1) rotate(0deg); }
+  100%{ transform: scale(1.08) rotate(4deg); }
+}
+
+.hero__tag-ja{
+  font-family: var(--f-mincho);
+  font-size: clamp(1.4rem, 0.9rem + 1.3vw, 2.3rem);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  margin-bottom: 0.5rem;
+}
+.hero__tag-ja em{
+  font-style:normal;
+  background: linear-gradient(transparent 60%, rgba(201,150,72,0.45) 60%, rgba(201,150,72,0.45) 85%, transparent 85%);
+  padding: 0 0.1em;
+}
+.hero__tag-en{
+  font-family: var(--f-en);
+  font-style: italic;
+  font-size: 1.05rem;
+  letter-spacing: 0.3em;
+  color: var(--c-shu);
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+}
+.hero__tag-en::before{ content:"— "; color:var(--c-sumi-3); }
+
+.hero__cta{ display:flex; gap:1rem; flex-wrap:wrap; }
+.btn{
+  display:inline-flex; align-items:center; gap:0.6rem;
+  padding: 0.95rem 1.6rem;
+  border: 1px solid var(--c-sumi);
+  font-family: var(--f-mono); font-size: 0.7rem;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  background: var(--c-paper);
+  transition: all 250ms var(--e-out);
+  position:relative; overflow:hidden;
+}
+.btn::before{
+  content:""; position:absolute; inset:0;
+  background: var(--c-sumi);
+  transform: translateY(101%);
+  transition: transform 350ms var(--e-out);
+  z-index:-1;
+}
+.btn:hover::before{ transform: translateY(0); }
+.btn:hover{ color: var(--c-paper); }
+.btn--primary{ background: var(--c-sumi); color: var(--c-paper); }
+.btn--primary::before{ background: var(--c-shu); }
+.btn--primary:hover{ color: var(--c-paper); border-color: var(--c-shu); }
+
+/* 縦書きサブテキスト */
+.hero__vertical{
+  writing-mode: vertical-rl;
+  font-family: var(--f-mincho);
+  font-size: 0.95rem;
+  letter-spacing: 0.5em;
+  color: var(--c-sumi-2);
+  padding: 2rem 0.8rem;
+  border-left: 1px solid rgba(28,23,18,0.25);
+  border-right: 1px solid rgba(28,23,18,0.25);
+  align-self: center;
+  max-height: 60vh;
+}
+.hero__vertical em{ font-style:normal; color: var(--c-shu); }
+@media (max-width: 900px){
+  .hero{ grid-template-columns: 1fr; }
+  .hero__vertical{ display:none; }
+}
+
+/* ===================== 共通セクション ===================== */
+section:not(.hero){
+  padding: 6rem 2.5rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  position:relative;
+}
+.sec-head{
+  display:grid; grid-template-columns: 180px 1fr;
+  gap: 2rem; align-items:end;
+  margin-bottom: 3.5rem;
+  border-bottom: 2px solid var(--c-sumi);
+  padding-bottom: 1.4rem;
+}
+.sec-num{
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--c-shu);
+  text-transform: uppercase;
+}
+.sec-num::before{ content:"§ "; color: var(--c-ai); }
+.sec-title{
+  font-family: var(--f-mincho);
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  display:flex; flex-direction:column; gap: 0.4rem;
+}
+.sec-title .en{
+  font-family: var(--f-en);
+  font-style: italic; font-weight: 400;
+  font-size: 0.42em;
+  color: var(--c-ai);
+  letter-spacing: 0.08em;
+}
+@media (max-width: 720px){ .sec-head{ grid-template-columns: 1fr; gap: 0.6rem; } }
+
+/* スクロール表示 */
+.reveal{ opacity:0; transform: translateY(24px); transition: opacity 700ms var(--e-out), transform 700ms var(--e-out); }
+.reveal.in{ opacity:1; transform:none; }
+
+/* ===================== ABOUT ===================== */
+.about{ display:grid; grid-template-columns: 1fr 2fr; gap: 4.5rem; }
+.about__lead{
+  font-family: var(--f-mincho);
+  font-size: clamp(1.3rem, 0.9rem + 1vw, 1.8rem);
+  line-height: 1.7;
+  border-left: 3px solid var(--c-shu);
+  padding-left: 1.5rem;
+}
+.about__lead em{
+  font-style: normal;
+  background: linear-gradient(transparent 60%, rgba(181,58,29,0.2) 60%);
+}
+.about__body p{ margin-bottom: 1.3rem; color: var(--c-sumi-2); }
+.about__body p:first-child::first-letter{
+  font-family: var(--f-mincho);
+  font-size: 3.6rem;
+  float: left;
+  line-height: 1;
+  padding: 0.25rem 0.55rem 0 0;
+  color: var(--c-shu);
+  font-weight: 900;
+}
+@media (max-width: 860px){ .about{ grid-template-columns: 1fr; gap: 2rem; } }
+
+/* ===================== PRODUCTS (ベント) ===================== */
+.products-intro{ color: var(--c-sumi-2); max-width: 62ch; margin-bottom: 3rem; }
+.bento{
+  display:grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 180px;
+  gap: 1.2rem;
+}
+.bento > *{
+  background: var(--c-paper-2);
+  border: 1px solid rgba(28,23,18,0.18);
+  position: relative;
+  overflow: hidden;
+  transition: transform 400ms var(--e-out), box-shadow 400ms var(--e-out), border-color 300ms;
+}
+.bento > *:hover{ transform: translateY(-4px); box-shadow: 0 18px 40px -15px rgba(28,23,18,0.25); }
+
+/* タイル: メインアプリ(大) */
+.tile-hero{
+  grid-column: span 4;
+  grid-row: span 2;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 170px;
+  gap: 1.5rem;
+  background:
+    radial-gradient(circle at 90% 10%, rgba(201,150,72,0.2), transparent 60%),
+    var(--c-paper-2);
+}
+.tile-hero:hover{ border-color: var(--c-shu); }
+
+.tile-hero__body{ display:flex; flex-direction:column; justify-content:space-between; min-width:0; }
+.tile-hero__top{ display:flex; gap:1rem; align-items:center; }
+.tile-hero__icon{
+  width: 58px; height: 58px;
+  border-radius: 14px;
+  display:grid; place-items:center;
+  font-family: var(--f-en); font-style:italic; font-weight:700; font-size:1.5rem;
+  color: var(--c-paper);
+  background: linear-gradient(135deg, var(--c-shu), var(--c-kin));
+  box-shadow: 0 8px 22px -5px rgba(181,58,29,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  flex: none;
+}
+.tile-hero__cat{
+  font-family: var(--f-mono); font-size: 0.62rem;
+  letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--c-sumi-3);
+}
+.tile-hero__name{
+  font-family: var(--f-mincho); font-weight: 700;
+  font-size: clamp(1.4rem, 1rem + 1vw, 2rem);
+  margin-top: 0.15rem;
+  line-height: 1.1;
+}
+.tile-hero__desc{
+  font-size: 0.95rem; color: var(--c-sumi-2);
+  margin-top: 1rem; line-height: 1.7;
+}
+.tile-hero__bottom{ display:flex; flex-wrap:wrap; gap: 0.5rem; align-items:center; margin-top: 1rem; }
+.chip{
+  font-family: var(--f-mono); font-size: 0.6rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 0.32rem 0.7rem;
+  border: 1px solid rgba(28,23,18,0.3);
+  background: rgba(255,255,255,0.25);
+}
+.chip--released{ border-color: var(--c-shu); color: var(--c-shu); }
+.chip--developing{ border-color: var(--c-ai); color: var(--c-ai); }
+
+.link-row{ display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:auto; padding-top:1rem; }
+.link-row a{
+  display:inline-flex; align-items:center; gap:0.4rem;
+  padding: 0.55rem 0.95rem;
+  font-family: var(--f-mono); font-size: 0.64rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  border: 1px solid var(--c-sumi);
+  background: var(--c-paper);
+  transition: all 220ms;
+}
+.link-row a:hover{ background: var(--c-sumi); color: var(--c-paper); }
+.link-row a.play{ border-color: var(--c-shu); color: var(--c-shu); }
+.link-row a.play:hover{ background: var(--c-shu); color: var(--c-paper); }
+
+/* スマホモックアップ(小) */
+.tile-phone{
+  position:relative;
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+}
+.mini{
+  width: 150px; height: 300px;
+  border-radius: 24px;
+  padding: 5px;
+  background: linear-gradient(160deg, #2A2218 0%, #16110C 100%);
+  box-shadow: 0 25px 50px -15px rgba(28,23,18,0.45), inset 0 1px 0 rgba(255,255,255,0.1);
+  transform: rotate(-4deg);
+  transition: transform 500ms var(--e-out);
+}
+.tile-hero:hover .mini{ transform: rotate(-1deg) translateY(-4px); }
+.mini__notch{ position:absolute; top:14px; left:50%; transform:translateX(-50%); width:36px; height:10px; border-radius:6px; background:#0A0706; z-index:2; }
+.mini__scr{
+  width:100%; height:100%;
+  border-radius: 19px;
+  overflow:hidden;
+  display:flex; flex-direction:column;
+}
+.mini__scr--ot{ background: linear-gradient(180deg, #F4EBD5, #E2D5B5); color:#2A1F15; }
+.mini__scr--ls{ background: linear-gradient(180deg, #F0D8A8 0%, #D8793A 60%, #8E2E12 100%); color:#FFF5E0; }
+.mini__hdr{ padding: 18px 12px 6px; font-family: var(--f-mincho); font-weight:700; font-size:0.78rem; }
+.mini__sub{ padding:0 12px; font-family:var(--f-mono); font-size:0.5rem; letter-spacing:0.15em; opacity:0.6; margin-bottom:10px; }
+.mini__list{ padding: 0 10px; display:flex; flex-direction:column; gap:6px; }
+.mini__item{
+  padding: 6px 8px;
+  background: rgba(42,31,21,0.06);
+  border-radius: 7px;
+  font-size: 0.62rem; font-weight:500;
+  display:flex; align-items:center; gap:6px;
+}
+.mini__item .d{ width:6px; height:6px; border-radius:50%; background: var(--c-shu); flex:none; }
+.mini__item.done{ opacity:0.5; text-decoration:line-through; }
+.mini__item.done .d{ background:#6B8452; }
+.mini__count{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding: 0 10px;
+}
+.mini__count-n{
+  font-family: var(--f-en); font-style:italic; font-weight:700;
+  font-size: 1.7rem; letter-spacing: -0.01em;
+  text-shadow: 0 0 18px rgba(255,213,150,0.55);
+  color:#FFF5E0;
+}
+.mini__count-l{ font-family:var(--f-mono); font-size:0.48rem; letter-spacing:0.25em; text-transform:uppercase; opacity:0.75; }
+
+@media (max-width: 900px){
+  .tile-hero{ grid-template-columns: 1fr; grid-column: span 6; grid-row: span 3; }
+  .tile-phone{ order: -1; }
+  .mini{ transform: rotate(0); }
+}
+
+/* タイル: 小カード群 */
+.tile-note{
+  grid-column: span 2;
+  padding: 1.6rem;
+  display:flex; flex-direction:column; justify-content:space-between;
+  background:
+    linear-gradient(135deg, rgba(181,58,29,0.08), transparent 60%),
+    var(--c-paper-2);
+}
+.tile-note__kicker{
+  font-family: var(--f-mono); font-size: 0.62rem;
+  letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--c-shu);
+}
+.tile-note__big{
+  font-family: var(--f-mincho);
+  font-size: 1.6rem;
+  line-height: 1.3;
+  font-weight:700;
+  margin-top: 0.6rem;
+}
+.tile-note__tail{ font-family: var(--f-mono); font-size: 0.6rem; letter-spacing: 0.2em; color: var(--c-sumi-3); text-transform:uppercase; }
+
+.tile-quote{
+  grid-column: span 2;
+  padding: 1.6rem;
+  background: var(--c-sumi);
+  color: var(--c-paper);
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.tile-quote em{ font-style:normal; color: var(--c-kin-soft); }
+.tile-quote__body{ font-family: var(--f-mincho); font-size: 1rem; line-height: 1.75; }
+.tile-quote__cap{ font-family: var(--f-mono); font-size:0.6rem; letter-spacing:0.24em; color: var(--c-kin-soft); text-transform:uppercase; }
+
+.tile-coming{
+  grid-column: span 2;
+  display:grid; place-items:center;
+  text-align:center;
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em; text-transform:uppercase;
+  color: var(--c-sumi-3);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 10px, rgba(28,23,18,0.03) 10px 11px),
+    var(--c-paper-2);
+  transition: color 300ms;
+}
+.tile-coming:hover{ color: var(--c-shu); }
+.tile-coming span{ font-family: var(--f-en); font-size: 2.4rem; font-style:italic; color: var(--c-paper-3); display:block; margin-bottom: 0.4rem; transition: color 300ms; }
+.tile-coming:hover span{ color: var(--c-shu); }
+
+@media (max-width: 720px){
+  .bento{ grid-template-columns: repeat(2, 1fr); grid-auto-rows: auto; }
+  .tile-hero, .tile-note, .tile-quote, .tile-coming{ grid-column: span 2; grid-row: auto; min-height: 200px; }
+}
+
+/* ===================== CONTACT ===================== */
+.contact{
+  display:grid; grid-template-columns: auto 1fr auto;
+  gap: 2rem; align-items:center;
+  padding: 2rem 2.5rem;
+  background: var(--c-paper-2);
+  border: 2px solid var(--c-sumi);
+  transition: all 400ms var(--e-out);
+  position:relative; overflow:hidden;
+}
+.contact::before{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(120deg, var(--c-sumi) 0%, var(--c-shu) 100%);
+  transform: translateX(-101%);
+  transition: transform 500ms var(--e-out);
+}
+.contact > *{ position:relative; z-index:1; }
+.contact:hover::before{ transform: translateX(0); }
+.contact:hover{ color: var(--c-paper); border-color: var(--c-shu); }
+.contact__lbl{ font-family:var(--f-mono); font-size:0.7rem; letter-spacing:0.3em; color:var(--c-shu); transition: color 300ms; }
+.contact:hover .contact__lbl{ color: var(--c-kin-soft); }
+.contact__addr{ font-family:var(--f-en); font-style:italic; font-size:clamp(1.2rem,0.9rem + 1vw,1.8rem); }
+.contact__arrow{ font-size:1.6rem; color: var(--c-shu); transition:all 300ms; }
+.contact:hover .contact__arrow{ color: var(--c-kin-soft); transform: translateX(8px); }
+@media (max-width:620px){ .contact{ grid-template-columns:1fr; text-align:left; } }
+
+/* ===================== フッター ===================== */
+.footer{
+  margin-top: 4rem;
+  padding: 4rem 2.5rem 2rem;
+  border-top: 3px double var(--c-sumi);
+  background: var(--c-paper-2);
+}
+.footer__top{
+  max-width:1320px; margin:0 auto;
+  display:grid; grid-template-columns: 1fr 2fr; gap: 4rem;
+  padding-bottom: 3rem;
+}
+.footer__brand{ font-family: var(--f-en); font-size: 2rem; }
+.footer__brand .s{ color: var(--c-shu); font-weight:700; }
+.footer__brand .n{ font-style:italic; }
+.footer__tag{ margin-top: 0.5rem; font-family: var(--f-en); font-style: italic; font-size: 0.9rem; color: var(--c-shu); letter-spacing: 0.15em; }
+.footer__nav{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.footer__nav h4{ font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.3em; color: var(--c-ai); text-transform: uppercase; margin-bottom: 1rem; }
+.footer__nav ul{ display:flex; flex-direction:column; gap: 0.5rem; }
+.footer__nav a{ color: var(--c-sumi-2); font-size: 0.88rem; transition: color 200ms; }
+.footer__nav a:hover{ color: var(--c-shu); }
+.footer__bottom{
+  max-width:1320px; margin:0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(28,23,18,0.18);
+  display:flex; justify-content:space-between;
+  font-family: var(--f-mono); font-size: 0.68rem;
+  letter-spacing: 0.2em; color: var(--c-sumi-3);
+  text-transform: uppercase;
+}
+@media (max-width: 760px){
+  .footer__top{ grid-template-columns: 1fr; }
+  .footer__nav{ grid-template-columns: repeat(2, 1fr); }
+}
+
+/* リデュースモーション */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav__brand"><span class="s">/</span><span class="n">Kagari</span></a>
+  <ul class="nav__menu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main>
+<!-- ===================== ヒーロー ===================== -->
+<section class="hero">
+  <div class="hero__main">
+    <svg class="hero__ink" viewBox="0 0 260 260" aria-hidden="true">
+      <path d="M130 20 C 80 40, 40 90, 35 140 C 30 190, 60 230, 120 235 C 180 240, 225 200, 230 140 C 234 85, 195 35, 130 20 Z" />
+    </svg>
+    <div class="hero__meta">
+      <span>Slash-Kagari / independent studio</span>
+      <span>Est. MMXXVI</span>
+      <span>Tokyo, JP</span>
+    </div>
+    <h1 class="hero__title">
+      <span class="s">/</span><span class="w">Kagari</span>
+    </h1>
+    <p class="hero__tag-ja">篝に<em>必要な灯り</em>を。</p>
+    <p class="hero__tag-en">Light for the watchfire.</p>
+    <div class="hero__cta">
+      <a href="#products" class="btn btn--primary">製品を見る / Products</a>
+      <a href="#about" class="btn">屋号について / About</a>
+    </div>
+  </div>
+  <aside class="hero__vertical" aria-hidden="true">
+    日々の中にある小さな不便を、<em>手触りのよい道具</em>でそっと照らす
+  </aside>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about" class="reveal">
+  <div class="sec-head">
+    <div class="sec-num">01 / About</div>
+    <h2 class="sec-title"><span>篝の由来</span><span class="en">Why the watchfire</span></h2>
+  </div>
+  <div class="about">
+    <div class="about__lead"><p>過剰な情報の時代に、<em>必要な灯り</em>だけを。</p></div>
+    <div class="about__body">
+      <p>「篝（かがり）」は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
+      <p>情報もサービスも溢れる今、使う人の生活にそっと馴染み、日々を少しだけ整えるような道具を作りたい。派手さではなく、手触りと確かさを。</p>
+      <p>一人の開発者が、丁寧に時間をかけて、納得のいくものだけを世に出す。それが /Kagari の仕事です。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRODUCTS ===================== -->
+<section id="products" class="reveal">
+  <div class="sec-head">
+    <div class="sec-num">02 / Products</div>
+    <h2 class="sec-title"><span>製品</span><span class="en">Apps from the workshop</span></h2>
+  </div>
+  <p class="products-intro">暮らしの小さな不便を照らす、手触りのよい道具たち。</p>
+
+  <div class="bento">
+    <!-- Only Task (メイン大タイル) -->
+    <article class="tile-hero">
+      <div class="tile-hero__body">
+        <div>
+          <div class="tile-hero__top">
+            <div class="tile-hero__icon">OT</div>
+            <div>
+              <div class="tile-hero__cat">Android / Productivity</div>
+              <div class="tile-hero__name">Only Task</div>
+            </div>
+          </div>
+          <p class="tile-hero__desc">「今日やることを、一つだけ。」余計な機能を削ぎ落とし、一日の焦点を一つに絞るタスク管理アプリ。</p>
+          <div class="tile-hero__bottom">
+            <span class="chip chip--released">● Released</span>
+            <span class="chip">Only One</span>
+            <span class="chip">No Ads</span>
+            <span class="chip">Streak</span>
+          </div>
+        </div>
+        <div class="link-row">
+          <a href="products/only-task.html">▸ 詳細</a>
+          <a href="#" class="play">▶ Google Play</a>
+        </div>
+      </div>
+      <div class="tile-phone">
+        <div class="mini" aria-hidden="true">
+          <div class="mini__notch"></div>
+          <div class="mini__scr mini__scr--ot">
+            <div class="mini__hdr">今日のひとつ</div>
+            <div class="mini__sub">2026 / 04 / 23</div>
+            <div class="mini__list">
+              <div class="mini__item"><span class="d"></span>プロンプトを書く</div>
+              <div class="mini__item done"><span class="d"></span>コーヒーを淹れる</div>
+              <div class="mini__item done"><span class="d"></span>メール3件</div>
+              <div class="mini__item"><span class="d"></span>散歩20分</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- 小タイル: 数字で語る -->
+    <div class="tile-note">
+      <div class="tile-note__kicker">★ Stats</div>
+      <div class="tile-note__big">2 products,<br>1 hand.</div>
+      <div class="tile-note__tail">One developer · Tokyo</div>
+    </div>
+
+    <!-- 小タイル: 墨の引用 -->
+    <div class="tile-quote">
+      <div class="tile-quote__body">「明るすぎず、けれど<em>確かに足元を照らす</em>」</div>
+      <div class="tile-quote__cap">— Principle 01</div>
+    </div>
+
+    <!-- Life in Seconds (メイン大タイル) -->
+    <article class="tile-hero">
+      <div class="tile-phone">
+        <div class="mini" aria-hidden="true">
+          <div class="mini__notch"></div>
+          <div class="mini__scr mini__scr--ls">
+            <div class="mini__hdr">Life Seconds</div>
+            <div class="mini__sub">ALIVE · LIVING</div>
+            <div class="mini__count">
+              <div class="mini__count-n" id="secCount">914,284,392</div>
+              <div class="mini__count-l">seconds lived</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tile-hero__body">
+        <div>
+          <div class="tile-hero__top">
+            <div class="tile-hero__icon" style="background: linear-gradient(135deg, var(--c-ai), var(--c-shu));">LS</div>
+            <div>
+              <div class="tile-hero__cat">Flutter / Lifestyle</div>
+              <div class="tile-hero__name">Life in Seconds</div>
+            </div>
+          </div>
+          <p class="tile-hero__desc">人生を秒数で可視化する。日々を数字で感じ、残りの時間をどう使うかに向き合う、静かな相棒。</p>
+          <div class="tile-hero__bottom">
+            <span class="chip chip--developing">◐ In Progress</span>
+            <span class="chip">Live Counter</span>
+            <span class="chip">295 Quests</span>
+            <span class="chip">Widget</span>
+          </div>
+        </div>
+        <div class="link-row">
+          <a href="products/life-in-seconds.html">▸ 詳細</a>
+          <a href="#" class="play" style="opacity:0.6;">Coming Soon</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- 今後の枠 -->
+    <a href="#contact" class="tile-coming">
+      <span>+</span>
+      新しい灯り<br>Open Slot
+    </a>
+    <div class="tile-coming">
+      <span>03</span>
+      Planning<br>Next app
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact" class="reveal">
+  <div class="sec-head">
+    <div class="sec-num">03 / Contact</div>
+    <h2 class="sec-title"><span>連絡先</span><span class="en">Get in touch</span></h2>
+  </div>
+  <a class="contact" href="mailto:slash.kagari@outlook.com">
+    <span class="contact__lbl">EMAIL</span>
+    <span class="contact__addr">slash.kagari@outlook.com</span>
+    <span class="contact__arrow">→</span>
+  </a>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div>
+      <div class="footer__brand"><span class="s">/</span><span class="n">Kagari</span></div>
+      <p class="footer__tag">Light for the watchfire.</p>
+    </div>
+    <nav class="footer__nav">
+      <div><h4>Products</h4><ul><li><a href="products/only-task.html">Only Task</a></li><li><a href="products/life-in-seconds.html">Life in Seconds</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="legal/only-task-privacy.html">プライバシー</a></li><li><a href="legal/only-task-terms.html">利用規約</a></li><li><a href="legal/only-task-tokushoho.html">特商法</a></li></ul></div>
+      <div><h4>Link</h4><ul><li><a href="https://github.com/Slash-Kagari" target="_blank" rel="noopener">GitHub</a></li><li><a href="mailto:slash.kagari@outlook.com">Email</a></li></ul></div>
+    </nav>
+  </div>
+  <div class="footer__bottom">
+    <span>© /Kagari</span>
+    <span>Crafted quietly in Japan</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // スクロールで要素を浮かび上がらせる
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting){
+        en.target.classList.add('in');
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Life in Seconds のカウンター
+  const sec = document.getElementById('secCount');
+  if (sec && !reduced){
+    let n = 914284392;
+    setInterval(() => {
+      n++;
+      sec.textContent = n.toLocaleString('en-US');
+    }, 1000);
+  }
+})();
+</script>
+</body>
+</html>

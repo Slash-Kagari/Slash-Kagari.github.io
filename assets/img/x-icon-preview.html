@@ -1,0 +1,156 @@
+<!--
+  Xアイコン プレビュー & PNG化ヘルパー
+  使い方:
+  1) このファイルをブラウザでダブルクリックで開く
+  2) 各アイコンの「PNG ダウンロード」ボタンを押すと 400×400 PNG が保存される
+  3) X のプロフィール画像にアップロード
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>/Kagari — X アイコン プレビュー</title>
+<style>
+  body{
+    margin:0; padding:3rem 2rem;
+    background:#1A1812;
+    color:#EDE2CE;
+    font-family: system-ui, sans-serif;
+    min-height:100vh;
+  }
+  h1{ text-align:center; font-weight:400; margin-bottom:0.4rem; letter-spacing:0.05em; }
+  .lead{ text-align:center; opacity:0.65; margin-bottom:3rem; font-size:0.9rem; }
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .card{
+    background:#0F1218;
+    padding:2rem;
+    border:1px solid #2A3445;
+    text-align:center;
+  }
+  .card h2{ margin:0 0 0.4rem; font-weight:500; letter-spacing:0.08em; }
+  .card .desc{ opacity:0.6; font-size:0.82rem; margin-bottom:1.5rem; }
+  .icon-frame{
+    display:inline-block;
+    width:400px; height:400px;
+    margin-bottom:1.5rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .round{
+    display:inline-block;
+    width:160px; height:160px;
+    border-radius:50%;
+    overflow:hidden;
+    margin: 0 1rem 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    vertical-align: middle;
+  }
+  .round svg{ width:100%; height:100%; display:block; }
+  .small-label{ display:block; font-size:0.7rem; letter-spacing:0.2em; opacity:0.5; margin-top:0.5rem; text-transform:uppercase; }
+  .actions{ display:flex; gap:0.8rem; justify-content:center; flex-wrap:wrap; }
+  button, a.btn{
+    background:#D14A22;
+    color:#fff;
+    border:0;
+    padding:0.75rem 1.4rem;
+    font-family: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 200ms;
+  }
+  button:hover, a.btn:hover{ background:#F4C77A; color:#0A0D14; }
+  a.btn--ghost{ background:transparent; border:1px solid #3D4A60; color:#EDE2CE; }
+  a.btn--ghost:hover{ background:#EDE2CE; color:#0A0D14; border-color:#EDE2CE; }
+  .preview-row{ display:flex; align-items:center; justify-content:center; flex-wrap:wrap; }
+  .preview-row > div{ text-align:center; }
+</style>
+</head>
+<body>
+<h1>/Kagari — X アイコン候補</h1>
+<p class="lead">どちらかをXのプロフィール画像に。「PNG ダウンロード」ボタンで400×400 PNG を保存できます。</p>
+
+<div class="grid">
+
+  <!-- V4 -->
+  <div class="card">
+    <h2>V4 — 暗め / 燠火</h2>
+    <p class="desc">夜の工房・墨紺ベース。HP V4 (index-v4.html) と組み合わせる用。</p>
+    <div class="icon-frame">
+      <object id="svg-v4" type="image/svg+xml" data="x-icon-v4.svg" width="400" height="400"></object>
+    </div>
+    <div class="preview-row">
+      <div><div class="round"><object type="image/svg+xml" data="x-icon-v4.svg"></object></div><span class="small-label">160px Round</span></div>
+      <div><div class="round" style="width:80px;height:80px;"><object type="image/svg+xml" data="x-icon-v4.svg"></object></div><span class="small-label">80px Round</span></div>
+      <div><div class="round" style="width:48px;height:48px;"><object type="image/svg+xml" data="x-icon-v4.svg"></object></div><span class="small-label">48px Round</span></div>
+    </div>
+    <div class="actions">
+      <button data-svg="x-icon-v4.svg" data-name="kagari-x-icon-v4.png">PNG ダウンロード</button>
+      <a class="btn btn--ghost" href="x-icon-v4.svg" download>SVG ダウンロード</a>
+    </div>
+  </div>
+
+  <!-- V5 -->
+  <div class="card">
+    <h2>V5 — 中間 / 夕暮れ</h2>
+    <p class="desc">和紙 × 夕日の朱・金、墨の滲みと印章。HP V5 (index-v5.html) と組み合わせる用。</p>
+    <div class="icon-frame">
+      <object id="svg-v5" type="image/svg+xml" data="x-icon-v5.svg" width="400" height="400"></object>
+    </div>
+    <div class="preview-row">
+      <div><div class="round"><object type="image/svg+xml" data="x-icon-v5.svg"></object></div><span class="small-label">160px Round</span></div>
+      <div><div class="round" style="width:80px;height:80px;"><object type="image/svg+xml" data="x-icon-v5.svg"></object></div><span class="small-label">80px Round</span></div>
+      <div><div class="round" style="width:48px;height:48px;"><object type="image/svg+xml" data="x-icon-v5.svg"></object></div><span class="small-label">48px Round</span></div>
+    </div>
+    <div class="actions">
+      <button data-svg="x-icon-v5.svg" data-name="kagari-x-icon-v5.png">PNG ダウンロード</button>
+      <a class="btn btn--ghost" href="x-icon-v5.svg" download>SVG ダウンロード</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// SVG → PNG (400×400) ダウンロード
+document.querySelectorAll('button[data-svg]').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const url = btn.dataset.svg;
+    const name = btn.dataset.name;
+    try {
+      const res = await fetch(url);
+      const svgText = await res.text();
+      const blob = new Blob([svgText], { type: 'image/svg+xml' });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = 400; c.height = 400;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0, 400, 400);
+        URL.revokeObjectURL(blobUrl);
+        c.toBlob(b => {
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(b);
+          a.download = name;
+          a.click();
+        }, 'image/png');
+      };
+      img.onerror = () => alert('画像変換に失敗しました。SVGを直接ダウンロードしてオンラインツールでPNG化してください。');
+      img.src = blobUrl;
+    } catch (e) {
+      alert('読み込みに失敗しました: ' + e.message);
+    }
+  });
+});
+</script>
+</body>
+</html>

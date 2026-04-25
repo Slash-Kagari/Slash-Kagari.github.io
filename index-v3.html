@@ -1,0 +1,928 @@
+<!--
+  /Kagari — V3 (白ベース + 朱・藍 + 斬撃アニメ + デジタル要素)
+  方向性: 白ベース、薄い篝格子、赤い「/」、クリックで斬撃エフェクト、
+          マウス追従の灯り、ルーラー/クロスヘア等のデジタル要素。
+  役割: 比較用サンプル。採用するなら index.html に差し替え。
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>/Kagari — 篝に必要な灯りを。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet" />
+<style>
+/* ===================== トークン ===================== */
+:root {
+  --c-paper:    #F7F3EA;   /* 生成り */
+  --c-paper-2:  #EFE9DB;
+  --c-paper-3:  #E3DAC3;
+  --c-ink:      #141317;   /* 墨 */
+  --c-ink-2:    #3A3540;
+  --c-ink-3:    #7D7683;
+  --c-shu:      #C8391C;   /* 朱 */
+  --c-shu-deep: #8E1F0B;
+  --c-shu-warm: #E85A36;
+  --c-ai:       #1E3A5F;   /* 藍 */
+  --c-ai-deep:  #0F2238;
+  --c-ai-light: #3D6B9A;
+  --c-line:     #D4CCB8;
+  --c-line-2:   #BDB49D;
+
+  --f-mincho: "Shippori Mincho","Noto Serif JP",serif;
+  --f-sans:   "Noto Sans JP",system-ui,sans-serif;
+  --f-en:     "Cormorant Garamond","Times New Roman",serif;
+  --f-mono:   "JetBrains Mono",ui-monospace,monospace;
+
+  --t-hero:   clamp(5rem, 3rem + 10vw, 13rem);
+  --e-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in:     cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--c-paper);
+  color: var(--c-ink);
+  font-family: var(--f-sans);
+  font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.05rem);
+  line-height: 1.85;
+  overflow-x: hidden;
+  cursor: default;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font: inherit; cursor: pointer; border: 0; background: none; color: inherit; padding: 0; }
+
+/* 微かなスキャンライン(デジタル要素) */
+body::after {
+  content: "";
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    rgba(20,19,23,0.018) 2px 3px
+  );
+  pointer-events: none;
+  z-index: 90;
+  mix-blend-mode: multiply;
+}
+
+/* ===================== ナビ ===================== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1rem 2.5rem;
+  z-index: 100;
+  background: rgba(247,243,234,0.85);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--c-line);
+}
+.nav__brand { font-family: var(--f-en); font-size: 1.4rem; letter-spacing: 0.01em; }
+.nav__brand .s { color: var(--c-shu); font-weight: 700; font-size: 1.15em; }
+.nav__brand .n { font-style: italic; font-weight: 500; }
+.nav__menu { display: flex; gap: 2rem; font-family: var(--f-mono); font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--c-ink-2); }
+.nav__menu a { position: relative; transition: color 200ms; }
+.nav__menu a::before {
+  content: "▸";
+  color: var(--c-shu);
+  opacity: 0;
+  margin-right: 0.4em;
+  transition: opacity 200ms;
+}
+.nav__menu a:hover { color: var(--c-ai); }
+.nav__menu a:hover::before { opacity: 1; }
+
+/* ===================== デジタル装飾: 端のルーラー ===================== */
+.rulers {
+  position: fixed; inset: 5rem 1rem 1rem 1rem;
+  pointer-events: none;
+  z-index: 50;
+}
+.rulers::before, .rulers::after {
+  content: "";
+  position: absolute;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--c-line-2) 0 1px,
+    transparent 1px 20px
+  );
+}
+.rulers::before { top: 0; bottom: 0; left: 0; width: 1px; }
+.rulers::after  { top: 0; bottom: 0; right: 0; width: 1px; }
+.ruler-marks {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-family: var(--f-mono);
+  font-size: 0.55rem;
+  color: var(--c-ink-3);
+  letter-spacing: 0.1em;
+}
+.ruler-marks--left { left: -2rem; padding: 2rem 0; align-items: flex-end; text-align: right; }
+.ruler-marks--right { right: -2.5rem; padding: 2rem 0; align-items: flex-start; }
+.ruler-marks span { writing-mode: vertical-rl; opacity: 0.7; }
+
+/* 角のクロスマーク */
+.crosshair {
+  position: fixed;
+  width: 14px; height: 14px;
+  z-index: 51;
+  pointer-events: none;
+}
+.crosshair::before, .crosshair::after {
+  content: "";
+  position: absolute;
+  background: var(--c-shu);
+}
+.crosshair::before { left: 6px; top: 0; width: 1px; height: 100%; }
+.crosshair::after  { top: 6px; left: 0; width: 100%; height: 1px; }
+.crosshair--tl { top: 5.5rem; left: 1rem; }
+.crosshair--tr { top: 5.5rem; right: 1rem; }
+.crosshair--bl { bottom: 1rem; left: 1rem; }
+.crosshair--br { bottom: 1rem; right: 1rem; }
+
+/* カーソル追従の灯り */
+.cursor-glow {
+  position: fixed;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(200,57,28,0.08) 0%,
+    rgba(232,90,54,0.05) 30%,
+    rgba(30,58,95,0.03) 55%,
+    transparent 75%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  transition: opacity 400ms;
+  mix-blend-mode: multiply;
+  will-change: left, top;
+}
+
+/* ===================== ヒーロー ===================== */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  padding: 8rem 2.5rem 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* 薄い篝格子(SVG) */
+.hero__lattice {
+  position: absolute; inset: 0;
+  z-index: -1;
+  opacity: 0.4;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+.hero__lattice line { stroke: var(--c-line-2); stroke-width: 1; }
+.hero__lattice line.accent { stroke: var(--c-ai-light); stroke-width: 1; opacity: 0.5; }
+
+/* 上部のデジタルメタ情報 */
+.hero__meta {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--c-ink-3);
+  text-transform: uppercase;
+  margin-bottom: 4rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--c-line);
+}
+.hero__meta span::before {
+  content: "● ";
+  color: var(--c-shu);
+}
+.hero__meta span:nth-child(2)::before { color: var(--c-ai); }
+.hero__meta span:nth-child(3)::before { color: var(--c-ink-2); }
+
+/* タイトル */
+.hero__title {
+  font-family: var(--f-en);
+  font-size: var(--t-hero);
+  font-weight: 500;
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: baseline;
+  gap: 0.02em;
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+/* 赤いスラッシュ(クリック可能) */
+.slash-btn {
+  color: var(--c-shu);
+  font-weight: 700;
+  font-size: 1.15em;
+  position: relative;
+  transition: transform 200ms var(--e-out), filter 200ms;
+  filter: drop-shadow(0 0 0 transparent);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0 0.05em;
+}
+.slash-btn:hover {
+  transform: translateY(-4px) rotate(-2deg);
+  filter: drop-shadow(0 0 20px rgba(200,57,28,0.5));
+}
+.slash-btn::after {
+  content: "click";
+  position: absolute;
+  top: -0.5em;
+  right: -2.5em;
+  font-family: var(--f-mono);
+  font-size: 0.1em;
+  letter-spacing: 0.2em;
+  color: var(--c-ink-3);
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 300ms;
+  writing-mode: horizontal-tb;
+}
+.slash-btn:hover::after { opacity: 1; }
+
+/* クリック直後の燃焼 */
+.slash-btn.is-burning {
+  animation: burn 1.2s var(--e-out) forwards;
+}
+@keyframes burn {
+  0% { color: var(--c-shu); filter: drop-shadow(0 0 0 transparent); }
+  20% { color: #FFD18A; filter: drop-shadow(0 0 30px rgba(255,180,80,1)) drop-shadow(0 0 60px rgba(200,57,28,0.8)); transform: scale(1.15) rotate(-3deg); }
+  50% { color: #FFF; filter: drop-shadow(0 0 50px rgba(255,220,150,1)) drop-shadow(0 0 80px rgba(232,90,54,0.9)); transform: scale(1.2); }
+  100% { color: var(--c-shu); filter: drop-shadow(0 0 0 transparent); transform: scale(1); }
+}
+
+.kagari-text {
+  color: var(--c-ink);
+  font-style: italic;
+}
+
+/* タグライン */
+.hero__tag-ja {
+  font-family: var(--f-mincho);
+  font-size: clamp(1.4rem, 0.9rem + 1.3vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--c-ink);
+  margin-bottom: 0.4rem;
+}
+.hero__tag-en {
+  font-family: var(--f-en);
+  font-style: italic;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  color: var(--c-shu);
+  text-transform: uppercase;
+  margin-bottom: 3.5rem;
+}
+.hero__tag-en::before {
+  content: "─ ";
+  color: var(--c-ink-3);
+  letter-spacing: 0;
+}
+
+/* 下部ステータスバー (デジタル要素) */
+.hero__status {
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  gap: 3rem;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--c-ink-3);
+  text-transform: uppercase;
+  padding-top: 1rem;
+  border-top: 1px solid var(--c-line);
+}
+.hero__status b {
+  display: block;
+  font-family: var(--f-en);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.3rem;
+  color: var(--c-ink);
+  letter-spacing: 0;
+  margin-top: 0.3rem;
+}
+.hero__status span:nth-child(2) b { color: var(--c-shu); }
+.hero__status span:nth-child(3) b { color: var(--c-ai); }
+
+/* 斬撃エフェクト層 */
+.slash-fx {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  overflow: hidden;
+}
+
+/* ===================== 共通セクション ===================== */
+section:not(.hero) {
+  padding: 7rem 2.5rem;
+  max-width: 1320px;
+  margin: 0 auto;
+  position: relative;
+}
+.section__head {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 2rem;
+  align-items: end;
+  margin-bottom: 4rem;
+  border-bottom: 1px solid var(--c-ink);
+  padding-bottom: 1.5rem;
+}
+.section__num {
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  color: var(--c-shu);
+  text-transform: uppercase;
+}
+.section__num::before {
+  content: "§ ";
+  color: var(--c-ai);
+}
+.section__title {
+  font-family: var(--f-mincho);
+  font-size: clamp(2rem, 1.2rem + 3vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.section__title span:nth-child(2) {
+  font-family: var(--f-en);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.42em;
+  color: var(--c-ai);
+  letter-spacing: 0.08em;
+}
+
+/* ===================== ABOUT ===================== */
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 5rem;
+}
+.about__lead {
+  font-family: var(--f-mincho);
+  font-size: clamp(1.3rem, 0.9rem + 1vw, 1.8rem);
+  line-height: 1.7;
+  border-left: 3px solid var(--c-shu);
+  padding-left: 1.5rem;
+  position: relative;
+}
+.about__lead::before {
+  content: "Ⓒ";
+  position: absolute;
+  left: -2rem;
+  top: -0.2rem;
+  font-family: var(--f-mono);
+  font-size: 1rem;
+  color: var(--c-ai);
+}
+.about__lead em {
+  font-style: normal;
+  background: linear-gradient(transparent 60%, rgba(200,57,28,0.22) 60%);
+}
+.about__body p { margin-bottom: 1.4rem; color: var(--c-ink-2); }
+.about__body p:first-child::first-letter {
+  font-family: var(--f-mincho);
+  font-size: 3.5rem;
+  float: left;
+  line-height: 1;
+  padding: 0.3rem 0.5rem 0 0;
+  color: var(--c-shu);
+  font-weight: 900;
+}
+
+.about__principles {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 3rem;
+  border: 1px solid var(--c-ink);
+  background: var(--c-paper);
+}
+.about__principles li {
+  padding: 2.2rem 1.8rem;
+  font-family: var(--f-mincho);
+  font-size: 1.02rem;
+  border-right: 1px solid var(--c-line);
+  position: relative;
+  overflow: hidden;
+  transition: background 300ms;
+}
+.about__principles li:last-child { border-right: 0; }
+.about__principles li:hover { background: var(--c-paper-2); }
+.about__principles li::before {
+  content: attr(data-n);
+  position: absolute;
+  right: -0.5rem; top: -1rem;
+  font-family: var(--f-en);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 6rem;
+  color: var(--c-paper-3);
+  line-height: 1;
+  pointer-events: none;
+}
+.about__principles li span {
+  display: block;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  color: var(--c-ai);
+  margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 1;
+}
+.about__principles li p { position: relative; z-index: 1; }
+
+@media (max-width: 860px) {
+  .about__grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .about__principles { grid-template-columns: 1fr; }
+  .about__principles li { border-right: 0; border-bottom: 1px solid var(--c-line); }
+}
+
+/* ===================== PRODUCTS ===================== */
+.products__note { color: var(--c-ink-2); max-width: 60ch; margin-bottom: 2.5rem; }
+.products__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  border: 1px solid var(--c-ink);
+  margin-bottom: 4rem;
+}
+.product-cell {
+  background: var(--c-paper);
+  border-right: 1px solid var(--c-line);
+  border-bottom: 1px solid var(--c-line);
+  transition: all 300ms var(--e-out);
+  position: relative;
+}
+.product-cell--placeholder {
+  background: var(--c-paper-2);
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  color: var(--c-line-2);
+  font-family: var(--f-mono);
+  font-size: 0.8rem;
+}
+.product-cell__link {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.3rem 1.5rem;
+  min-height: 120px;
+  position: relative;
+}
+.product-cell__idx {
+  position: absolute;
+  top: 0.6rem; left: 0.8rem;
+  font-family: var(--f-mono);
+  font-size: 0.58rem;
+  color: var(--c-ink-3);
+  letter-spacing: 0.15em;
+}
+.product-cell__icon {
+  width: 54px; height: 54px;
+  border: 1px solid var(--c-line);
+  display: grid; place-items: center;
+  background: var(--c-paper-2);
+  transition: all 300ms;
+}
+.product-cell__mono {
+  font-family: var(--f-en);
+  font-style: italic;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--c-shu);
+}
+.product-cell__name {
+  font-family: var(--f-mincho);
+  font-size: 1rem;
+  font-weight: 700;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.product-cell__tag { font-size: 0.72rem; color: var(--c-ink-3); display: block; }
+.product-cell__status { font-size: 0.6rem; color: var(--c-shu); }
+.product-cell[data-status="developing"] .product-cell__status { color: var(--c-ai); }
+
+.product-cell:hover {
+  background: var(--c-paper-2);
+  transform: translateY(-2px);
+  z-index: 3;
+  box-shadow: 0 10px 30px rgba(142,31,11,0.12), 0 2px 8px rgba(30,58,95,0.08);
+}
+.product-cell:hover .product-cell__icon {
+  background: var(--c-shu);
+  border-color: var(--c-shu);
+}
+.product-cell:hover .product-cell__mono { color: var(--c-paper); }
+
+/* ===================== CONTACT ===================== */
+.contact__email {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 2.5rem;
+  background: var(--c-paper-2);
+  border: 1px solid var(--c-ink);
+  transition: all 400ms var(--e-out);
+  position: relative;
+  overflow: hidden;
+}
+.contact__email::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--c-shu), var(--c-shu-warm));
+  transform: translateX(-100%);
+  transition: transform 500ms var(--e-out);
+  z-index: 0;
+}
+.contact__email:hover::before { transform: translateX(0); }
+.contact__email:hover { color: var(--c-paper); border-color: var(--c-shu-deep); }
+.contact__email > * { position: relative; z-index: 1; }
+
+.contact__email-label { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.3em; color: var(--c-shu); transition: color 300ms; }
+.contact__email:hover .contact__email-label { color: var(--c-paper); }
+.contact__email-addr { font-family: var(--f-en); font-style: italic; font-size: clamp(1.2rem, 0.9rem + 1vw, 1.8rem); }
+.contact__email-arrow { font-size: 1.5rem; color: var(--c-shu); transition: all 300ms; }
+.contact__email:hover .contact__email-arrow { color: var(--c-paper); transform: translateX(8px); }
+
+/* ===================== フッター ===================== */
+.footer {
+  margin-top: 4rem;
+  padding: 4rem 2.5rem 2rem;
+  border-top: 3px double var(--c-ink);
+  background: var(--c-paper-2);
+}
+.footer__top {
+  max-width: 1320px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  padding-bottom: 3rem;
+}
+.footer__brand { font-family: var(--f-en); font-size: 2rem; }
+.footer__brand .s { color: var(--c-shu); font-weight: 700; }
+.footer__brand .n { font-style: italic; }
+.footer__tag { margin-top: 0.5rem; font-family: var(--f-en); font-style: italic; font-size: 0.9rem; color: var(--c-shu); letter-spacing: 0.15em; }
+.footer__nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+.footer__nav h4 { font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.3em; color: var(--c-ai); text-transform: uppercase; margin-bottom: 1rem; }
+.footer__nav ul { display: flex; flex-direction: column; gap: 0.5rem; }
+.footer__nav a { color: var(--c-ink-2); font-size: 0.88rem; transition: color 200ms; }
+.footer__nav a:hover { color: var(--c-shu); }
+.footer__bottom {
+  max-width: 1320px; margin: 0 auto;
+  padding-top: 2rem;
+  border-top: 1px solid var(--c-line);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--c-ink-3);
+  text-transform: uppercase;
+}
+@media (max-width: 760px) {
+  .footer__top { grid-template-columns: 1fr; }
+  .footer__nav { grid-template-columns: repeat(2, 1fr); }
+  .hero__status { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+}
+
+/* リデュースモーション */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .slash-btn.is-burning { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ナビ -->
+<nav class="nav">
+  <a href="#" class="nav__brand"><span class="s">/</span><span class="n">Kagari</span></a>
+  <ul class="nav__menu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- デジタル装飾: ルーラー & クロスヘア & カーソル灯り -->
+<div class="rulers" aria-hidden="true">
+  <div class="ruler-marks ruler-marks--left">
+    <span>N 35°40′</span>
+    <span>2026</span>
+    <span>MMXXVI</span>
+  </div>
+  <div class="ruler-marks ruler-marks--right">
+    <span>E 139°45′</span>
+    <span>KAGARI.JP</span>
+    <span>№ 001</span>
+  </div>
+</div>
+<div class="crosshair crosshair--tl" aria-hidden="true"></div>
+<div class="crosshair crosshair--tr" aria-hidden="true"></div>
+<div class="crosshair crosshair--bl" aria-hidden="true"></div>
+<div class="crosshair crosshair--br" aria-hidden="true"></div>
+<div class="cursor-glow" aria-hidden="true"></div>
+
+<!-- 斬撃エフェクトレイヤー -->
+<div class="slash-fx" aria-hidden="true"></div>
+
+<!-- ===================== ヒーロー ===================== -->
+<section class="hero">
+  <svg class="hero__lattice" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <g id="lattice"></g>
+  </svg>
+
+  <div class="hero__meta">
+    <span>Slash-Kagari / individual studio</span>
+    <span>Est. MMXXVI</span>
+    <span>Tokyo, JP</span>
+  </div>
+
+  <h1 class="hero__title">
+    <button class="slash-btn" id="slash-btn" aria-label="斬撃を放つ" type="button">/</button><span class="kagari-text">Kagari</span>
+  </h1>
+  <p class="hero__tag-ja">篝に必要な灯りを。</p>
+  <p class="hero__tag-en">Light for the watchfire.</p>
+
+  <div class="hero__status">
+    <span>Released<b>1</b></span>
+    <span>In Progress<b>1</b></span>
+    <span>Discipline<b>Solo Dev</b></span>
+    <span>Origin<b>JP</b></span>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about">
+  <div class="section__head">
+    <div class="section__num">01 / About</div>
+    <h2 class="section__title"><span>篝の由来</span><span>Why the watchfire</span></h2>
+  </div>
+  <div class="about__grid">
+    <div class="about__lead"><p>過剰な情報の時代に、<em>必要な灯り</em>だけを。</p></div>
+    <div class="about__body">
+      <p>「篝（かがり）」は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
+      <p>情報もサービスも溢れる今、使う人の生活にそっと馴染み、日々を少しだけ整えるような道具を作りたい。派手さではなく、手触りと確かさを。</p>
+      <p>一人の開発者が、丁寧に時間をかけて、納得のいくものだけを世に出す。それが /Kagari の仕事です。</p>
+    </div>
+    <ul class="about__principles">
+      <li data-n="01"><span>Principle 01</span><p>小さな不便を、手触りのよい道具で照らす</p></li>
+      <li data-n="02"><span>Principle 02</span><p>使う人の生活にそっと馴染むものを</p></li>
+      <li data-n="03"><span>Principle 03</span><p>納得のいくものだけを、ひとつずつ</p></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ===================== PRODUCTS ===================== -->
+<section id="products">
+  <div class="section__head">
+    <div class="section__num">02 / Products</div>
+    <h2 class="section__title"><span>製品索引</span><span>The catalogue</span></h2>
+  </div>
+  <p class="products__note">増えていく製品を、一覧として素早く見渡せる索引。</p>
+  <ul class="products__grid">
+    <li class="product-cell" data-status="released">
+      <a href="products/only-task.html" class="product-cell__link">
+        <span class="product-cell__idx">P-001</span>
+        <div class="product-cell__icon"><span class="product-cell__mono">OT</span></div>
+        <div><span class="product-cell__name">Only Task</span><span class="product-cell__tag">シンプルなタスク管理</span></div>
+        <span class="product-cell__status">●</span>
+      </a>
+    </li>
+    <li class="product-cell" data-status="developing">
+      <a href="products/life-in-seconds.html" class="product-cell__link">
+        <span class="product-cell__idx">P-002</span>
+        <div class="product-cell__icon"><span class="product-cell__mono">LS</span></div>
+        <div><span class="product-cell__name">Life in Seconds</span><span class="product-cell__tag">人生を秒数で可視化</span></div>
+        <span class="product-cell__status">◐</span>
+      </a>
+    </li>
+    <li class="product-cell product-cell--placeholder">P-003</li>
+    <li class="product-cell product-cell--placeholder">P-004</li>
+    <li class="product-cell product-cell--placeholder">P-005</li>
+    <li class="product-cell product-cell--placeholder">P-006</li>
+  </ul>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact">
+  <div class="section__head">
+    <div class="section__num">03 / Contact</div>
+    <h2 class="section__title"><span>連絡先</span><span>Get in touch</span></h2>
+  </div>
+  <a class="contact__email" href="mailto:slash.kagari@outlook.com">
+    <span class="contact__email-label">EMAIL</span>
+    <span class="contact__email-addr">slash.kagari@outlook.com</span>
+    <span class="contact__email-arrow">→</span>
+  </a>
+</section>
+
+<footer class="footer">
+  <div class="footer__top">
+    <div>
+      <div class="footer__brand"><span class="s">/</span><span class="n">Kagari</span></div>
+      <p class="footer__tag">Light for the watchfire.</p>
+    </div>
+    <nav class="footer__nav">
+      <div><h4>Products</h4><ul><li><a href="products/only-task.html">Only Task</a></li><li><a href="products/life-in-seconds.html">Life in Seconds</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="legal/only-task-privacy.html">プライバシー</a></li><li><a href="legal/only-task-terms.html">利用規約</a></li><li><a href="legal/only-task-tokushoho.html">特商法</a></li></ul></div>
+      <div><h4>Link</h4><ul><li><a href="https://github.com/Slash-Kagari" target="_blank" rel="noopener">GitHub</a></li><li><a href="mailto:slash.kagari@outlook.com">Email</a></li></ul></div>
+    </nav>
+  </div>
+  <div class="footer__bottom">
+    <span>© /Kagari</span>
+    <span>Crafted in Japan</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ========== 1) 薄い篝格子を生成 ==========
+  const lat = document.getElementById('lattice');
+  if (lat) {
+    const W = 1000, H = 700, sp = 36;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const addLine = (x1,y1,x2,y2, cls) => {
+      const l = document.createElementNS(svgNS, 'line');
+      l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+      l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+      if (cls) l.setAttribute('class', cls);
+      lat.appendChild(l);
+    };
+    // 斜め(右上→左下)
+    for (let i = -H; i <= W + H; i += sp) addLine(i, 0, i + H, H);
+    // 斜め(左上→右下)
+    for (let i = -H; i <= W + H; i += sp) addLine(i, 0, i - H, H, 'accent');
+    // 横リング
+    for (let y = 0; y <= H; y += sp * 2) addLine(0, y, W, y);
+  }
+
+  // ========== 2) カーソル追従の灯り ==========
+  const glow = document.querySelector('.cursor-glow');
+  let gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+  let tx = gx, ty = gy;
+  document.addEventListener('pointermove', (e) => {
+    tx = e.clientX; ty = e.clientY;
+  });
+  function glowLoop() {
+    // イージングで滑らかに追従(ぼやけた感じ)
+    gx += (tx - gx) * 0.08;
+    gy += (ty - gy) * 0.08;
+    if (glow) {
+      glow.style.left = gx + 'px';
+      glow.style.top  = gy + 'px';
+    }
+    requestAnimationFrame(glowLoop);
+  }
+  if (!reduced) glowLoop();
+
+  // ========== 3) 「/」クリックで斬撃 + 燃焼 ==========
+  const slashBtn = document.getElementById('slash-btn');
+  const fx = document.querySelector('.slash-fx');
+
+  function triggerSlash(ev) {
+    if (reduced) return;
+    // 燃焼
+    slashBtn.classList.remove('is-burning');
+    void slashBtn.offsetWidth; // reflow で再トリガー
+    slashBtn.classList.add('is-burning');
+
+    // 画面を横切る斬撃ラインを生成
+    const slash = document.createElement('div');
+    slash.className = 'slash-line';
+    fx.appendChild(slash);
+
+    // ランダムな角度(斜めメイン)
+    const angle = -18 + (Math.random() * 8 - 4);
+    slash.style.setProperty('--angle', angle + 'deg');
+
+    // 火花を飛ばす
+    const rect = slashBtn.getBoundingClientRect();
+    const ox = rect.left + rect.width / 2;
+    const oy = rect.top + rect.height / 2;
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement('div');
+      s.className = 'spark';
+      const a = Math.random() * Math.PI * 2;
+      const d = 80 + Math.random() * 180;
+      s.style.left = ox + 'px';
+      s.style.top = oy + 'px';
+      s.style.setProperty('--dx', Math.cos(a) * d + 'px');
+      s.style.setProperty('--dy', Math.sin(a) * d + 'px');
+      s.style.setProperty('--size', (2 + Math.random() * 4) + 'px');
+      s.style.animationDelay = (Math.random() * 0.1) + 's';
+      fx.appendChild(s);
+      setTimeout(() => s.remove(), 1400);
+    }
+
+    // 画面フラッシュ
+    const flash = document.createElement('div');
+    flash.className = 'flash';
+    fx.appendChild(flash);
+    setTimeout(() => flash.remove(), 500);
+
+    setTimeout(() => slash.remove(), 1200);
+    setTimeout(() => slashBtn.classList.remove('is-burning'), 1300);
+  }
+
+  if (slashBtn) {
+    slashBtn.addEventListener('click', triggerSlash);
+    // ページロード時に1回ティザーで見せる
+    setTimeout(triggerSlash, 1400);
+  }
+})();
+</script>
+
+<!-- 斬撃用スタイルを動的に追加 -->
+<style>
+.slash-line {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 200vmax; height: 4px;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(255,255,255,0) 30%,
+    rgba(255,240,200,0.2) 40%,
+    #FFFFFF 48%,
+    #FFE4B8 50%,
+    #FFFFFF 52%,
+    rgba(255,150,60,0.3) 60%,
+    transparent 70%,
+    transparent 100%);
+  transform: translate(-50%, -50%) rotate(var(--angle, -18deg)) scaleX(0);
+  transform-origin: 0% 50%;
+  filter: drop-shadow(0 0 12px #FFD18A) drop-shadow(0 0 24px rgba(200,57,28,0.7));
+  animation: slashSweep 0.6s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+  z-index: 81;
+}
+@keyframes slashSweep {
+  0%   { transform: translate(-50%, -50%) rotate(var(--angle, -18deg)) scaleX(0); opacity: 0; }
+  20%  { transform: translate(-50%, -50%) rotate(var(--angle, -18deg)) scaleX(0.3); opacity: 1; }
+  60%  { transform: translate(-50%, -50%) rotate(var(--angle, -18deg)) scaleX(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) rotate(var(--angle, -18deg)) scaleX(1); opacity: 0; }
+}
+.spark {
+  position: fixed;
+  width: var(--size); height: var(--size);
+  background: radial-gradient(circle, #FFE4B8 0%, #FF9640 40%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sparkFly 1.2s cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+  z-index: 82;
+  filter: drop-shadow(0 0 6px #FFA040);
+}
+@keyframes sparkFly {
+  0%   { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+.flash {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(255,230,180,0.3), transparent 60%);
+  pointer-events: none;
+  animation: flashFade 0.5s ease-out forwards;
+  z-index: 80;
+}
+@keyframes flashFade {
+  0% { opacity: 0; }
+  20% { opacity: 1; }
+  100% { opacity: 0; }
+}
+</style>
+
+</body>
+</html>
