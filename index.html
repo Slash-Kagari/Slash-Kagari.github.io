@@ -17,7 +17,7 @@
 <meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=JetBrains+Mono:wght@300;400;600;700&family=DotGothic16&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
 <style>
 /* ===================== トークン ===================== */
 :root{
@@ -1031,6 +1031,595 @@ section:not(.hero){
   .slash-flame, .ember{ display:none; }
   .phone__device{ transform:none; }
 }
+
+/* =====================================================================
+   PIXEL SKIN — 全体の雰囲気はそのまま、ドット/ピクセル表現に置換
+   ===================================================================== */
+
+/* レンダリングをカリッと固定 */
+html, body{
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+  font-smooth: never;
+  text-rendering: optimizeSpeed;
+}
+img, svg, .phone__device, .phone__wallpaper, .app .icon, .dock-icon{
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* フォントトークンを上書き：和文=DotGothic16 / 欧文ディスプレイ=Press Start 2P / モノ=VT323 */
+:root{
+  --f-mincho: "DotGothic16","Shippori Mincho",serif;
+  --f-sans:   "DotGothic16","Noto Sans JP",sans-serif;
+  --f-en:     "Press Start 2P","Cormorant Garamond",monospace;
+  --f-mono:   "VT323","JetBrains Mono",ui-monospace,monospace;
+}
+
+/* 角丸を全廃。ピクセルは直角で締める */
+*, *::before, *::after{ border-radius: 0 !important; }
+
+/* 細かいblurを禁止（ドット感が消えるため）。ヒーローの炎/エンバーは別途設計しなおす */
+.nav, .phone__dock, .widget{ backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+.nav{ background: rgba(244,239,227,.95) !important; border-bottom: 2px solid var(--c-ink) !important; }
+
+/* 背景グレイン → 視認できるドットパターンへ */
+.bg-grain{
+  background-image:
+    radial-gradient(rgba(14,13,17,.20) 1px, transparent 1.4px) !important;
+  background-size: 4px 4px !important;
+  opacity: .9 !important;
+  image-rendering: pixelated;
+}
+/* スキャンラインを少し太く */
+.bg-scan{
+  background: repeating-linear-gradient(
+    0deg, transparent 0 3px, rgba(20,19,23,.05) 3px 4px) !important;
+}
+/* グリッドはそのまま、ただしマスクを階段状に見せるためdither重ね */
+.bg-grid::after{
+  content:""; position:absolute; inset:0;
+  background-image:
+    radial-gradient(rgba(30,93,166,.08) 1px, transparent 1.2px);
+  background-size: 8px 8px;
+  mix-blend-mode: multiply;
+}
+
+/* === タイポ === */
+.nav__brand{ font-family: "Press Start 2P", monospace !important; font-size: 1rem !important; letter-spacing: 0 !important; }
+.nav__brand .s{ font-size: 1em !important; }
+.nav__brand .n{ font-style: normal !important; font-weight: 400 !important; }
+.nav__menu{ font-family: "Press Start 2P", monospace !important; font-size: .55rem !important; letter-spacing: .14em !important; }
+.nav__live{ font-family: "VT323", monospace !important; font-size: .95rem !important; letter-spacing: .12em !important; }
+.nav__live .dot{ border-radius: 0 !important; width: 8px; height: 8px; }
+
+/* HEROタイトル：ピクセルらしくサイズ調整 */
+.hero__title{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: clamp(2.4rem, 1rem + 5.5vw, 6.4rem) !important;
+  line-height: 1 !important;
+  letter-spacing: 0 !important;
+  gap: .12em !important;
+}
+.hero__title::after{
+  font-family: "VT323", monospace !important;
+  font-size: .95rem !important;
+  letter-spacing: .18em !important;
+}
+.slash-btn{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: 1em !important;
+  /* グロー残しつつ、にじみ少なめ */
+  filter: drop-shadow(2px 2px 0 rgba(134,27,7,.55)) drop-shadow(0 0 6px rgba(200,57,28,.35));
+  animation: emberGlowPx 2.2s steps(4, end) infinite;
+}
+@keyframes emberGlowPx{
+  0%,100%{ filter: drop-shadow(2px 2px 0 rgba(134,27,7,.55)) drop-shadow(0 0 6px rgba(200,57,28,.35)); color: var(--c-shu); }
+  50%    { filter: drop-shadow(2px 2px 0 rgba(134,27,7,.7))  drop-shadow(0 0 12px rgba(232,90,54,.6)); color: var(--c-shu-warm); }
+}
+.slash-btn:hover{
+  transform: translate(-2px,-2px) !important;
+  filter: drop-shadow(4px 4px 0 rgba(134,27,7,.7)) drop-shadow(0 0 14px rgba(255,180,80,.5)) !important;
+}
+.kagari-text{ font-style: normal !important; }
+
+/* タグライン */
+.hero__tag-ja{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .18em !important;
+}
+.hero__tag-en{
+  font-family: "Press Start 2P", monospace !important;
+  font-style: normal !important;
+  font-size: .62rem !important;
+  letter-spacing: .18em !important;
+}
+
+/* マージナリア（縦書き） */
+.hero__margin-l b{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .35em !important;
+}
+.hero__margin-r .stamp{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: .85rem !important;
+  border-width: 2px !important;
+}
+.hero__margin-r .stamp::after{ inset: 2px !important; border-width: 2px !important; }
+.hero__margin-r .coord{ font-family: "VT323", monospace !important; font-size: .9rem !important; letter-spacing: .15em !important; }
+
+/* === 静かな炎 → ドット火 === */
+.slash-flame{ filter: none !important; mix-blend-mode: normal !important; }
+.slash-flame::before, .slash-flame::after{
+  border-radius: 0 !important;
+  background:
+    /* 4色のステップグラデっぽく見せる：中心→外周で段階的に色が変わる固いドット */
+    radial-gradient(ellipse at 50% 100%,
+      #FFE4B0 0%, #FFE4B0 22%,
+      #FFB264 22%, #FFB264 45%,
+      #E85A36 45%, #E85A36 70%,
+      #C8391C 70%, #C8391C 88%,
+      transparent 88%) !important;
+  animation-timing-function: steps(4, end) !important;
+  filter: none !important;
+}
+
+/* エンバー粒子：四角ピクセル */
+.ember{
+  width: 4px !important; height: 4px !important;
+  border-radius: 0 !important;
+  filter: none !important;
+  background: var(--c-shu-warm) !important;
+  box-shadow: 0 0 0 1px rgba(255,209,138,.6);
+  animation-timing-function: steps(8, end) !important;
+}
+
+/* 計測ルーラー＆十字 */
+.ruler-marks{ font-family: "VT323", monospace !important; font-size: .85rem !important; letter-spacing: .14em !important; }
+.crosshair{ width: 12px; height: 12px; }
+.crosshair::before{ left: 5px !important; width: 2px !important; }
+.crosshair::after{ top: 5px !important; height: 2px !important; }
+
+/* カーソル追従の灯り：ピクセル化のため少し小さく＋ハードな縁 */
+.cursor-glow{ filter: contrast(1.1); }
+
+/* === セクション === */
+.section__num{ font-family: "Press Start 2P", monospace !important; font-size: .55rem !important; letter-spacing: .15em !important; }
+.section__title{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: .04em !important;
+}
+.section__title em{
+  font-family: "Press Start 2P", monospace !important;
+  font-style: normal !important;
+  font-size: .32em !important;
+  letter-spacing: .1em !important;
+}
+.section__rule{ font-family: "VT323", monospace !important; font-size: .9rem !important; letter-spacing: .15em !important; }
+
+/* === ABOUT === */
+.about__lead{
+  font-family: "DotGothic16", sans-serif !important;
+  border-left-width: 4px !important;
+}
+.about__lead::before{ font-family: "DotGothic16", sans-serif !important; font-weight: 400 !important; }
+.about__body p:first-child::first-letter{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+}
+
+/* === PRODUCTS === */
+.products__note{ /* 本文はNoto Sans JPで読みやすさを残す */ }
+.products__hint{ font-family: "VT323", monospace !important; font-size: .95rem !important; letter-spacing: .15em !important; }
+.products__hint b{ font-family: "Press Start 2P", monospace !important; font-size: .7rem !important; }
+.products__stage{ border-width: 2px !important; }
+.products__stage::before{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .55rem !important; letter-spacing: .15em !important;
+}
+
+/* スマホモック → 角ばったピクセル筐体（Dynamic Islandも長方形に） */
+.phone__device{
+  border-width: 6px !important;
+  border-color: #1a1a1f !important;
+  box-shadow:
+    8px 8px 0 0 var(--c-ink),
+    16px 16px 0 0 rgba(200,57,28,.35),
+    inset 0 0 0 2px #2C2832 !important;
+  transform: rotate(0deg) !important;
+}
+.phone__device:hover{ transform: translate(-2px,-2px) !important; }
+.phone__island{
+  width: 110px !important; height: 26px !important;
+  border-radius: 0 !important;
+}
+.phone__island::after{ border-radius: 0 !important; width: 6px !important; height: 6px !important; }
+.phone__statusbar{ font-family: "VT323", monospace !important; font-size: 1rem !important; letter-spacing: 0 !important; }
+.phone__wallpaper::before{
+  font-family: "Press Start 2P", monospace !important;
+  font-style: normal !important;
+  font-size: 220px !important;
+  color: rgba(200,57,28,.10) !important;
+  transform: translate(-50%,-55%) rotate(0deg) !important;
+}
+.phone__indicator{ width: 110px !important; height: 4px !important; }
+
+/* ウィジェット = ピクセル枠 */
+.widget{
+  border: 2px solid rgba(255,255,255,.18) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+.widget--clock .label,
+.widget--studio .lbl,
+.widget--release .label{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .42rem !important;
+  letter-spacing: .15em !important;
+}
+.widget--clock .time{
+  font-family: "Press Start 2P", monospace !important;
+  font-style: normal !important;
+  font-size: 1.55rem !important;
+  letter-spacing: 0 !important;
+  text-shadow: 2px 2px 0 rgba(0,0,0,.6) !important;
+}
+.widget--clock .date{ font-family: "VT323", monospace !important; font-size: .95rem !important; letter-spacing: .08em !important; }
+.widget--studio .head{ font-family: "Press Start 2P", monospace !important; font-style: normal !important; font-size: .6rem !important; }
+.widget--studio .num{ font-family: "Press Start 2P", monospace !important; font-style: normal !important; font-size: 1rem !important; }
+.widget--studio .pulse{ border-radius: 0 !important; width: 8px !important; height: 8px !important; }
+.widget--release .name{ font-family: "DotGothic16", sans-serif !important; font-weight: 400 !important; font-size: .95rem !important; }
+.widget--release .status{ font-family: "VT323", monospace !important; font-size: .9rem !important; letter-spacing: .05em !important; }
+
+/* アプリアイコン：丸み廃止＋ピクセルベベル */
+.app .icon{
+  border-radius: 0 !important;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.5),
+    inset -2px -2px 0 rgba(0,0,0,.35),
+    3px 3px 0 rgba(0,0,0,.55) !important;
+}
+.app:hover .icon{
+  transform: translate(-1px,-1px) !important;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.5),
+    inset -2px -2px 0 rgba(0,0,0,.35),
+    4px 4px 0 var(--c-shu) !important;
+}
+.app--active .icon{
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.5),
+    inset -2px -2px 0 rgba(0,0,0,.35),
+    0 0 0 2px var(--c-shu),
+    4px 4px 0 var(--c-shu-deep) !important;
+}
+.app .label{ font-family: "VT323", monospace !important; font-size: .85rem !important; letter-spacing: .03em !important; text-shadow: 1px 1px 0 rgba(0,0,0,.8) !important; }
+.app--badge .icon::after{
+  border-radius: 0 !important;
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .42rem !important;
+  box-shadow: 0 0 0 2px #050507 !important;
+}
+
+.phone__dock{
+  border-radius: 0 !important;
+  border: 2px solid rgba(255,255,255,.2) !important;
+  background: rgba(255,255,255,.08) !important;
+}
+.dock-icon{
+  border-radius: 0 !important;
+  font-family: "Press Start 2P", monospace !important;
+  font-style: normal !important;
+  font-size: .8rem !important;
+  box-shadow:
+    inset 2px 2px 0 rgba(255,255,255,.45),
+    inset -2px -2px 0 rgba(0,0,0,.3),
+    3px 3px 0 rgba(0,0,0,.5) !important;
+}
+
+/* 詳細パネル */
+.detail-card{ border-width: 2px !important; }
+.detail__empty{ font-family: "DotGothic16", sans-serif !important; }
+.detail__empty .arrow{ font-family: "Press Start 2P", monospace !important; font-style: normal !important; }
+.detail__empty .hint{ font-family: "VT323", monospace !important; font-size: .9rem !important; letter-spacing: .15em !important; }
+
+/* コンソールはピクセル風の縁取りに */
+.console{
+  border-width: 2px !important;
+  box-shadow: 6px 6px 0 var(--c-ink) !important;
+}
+.console__title-icon{ border-radius: 0 !important; }
+
+/* === 火エフェクトを完全に無効化（ピクセル斬撃に置換） === */
+.slash-flame, .embers, .ember{ display:none !important; }
+.slash-btn{
+  animation: none !important;
+  filter: drop-shadow(2px 2px 0 rgba(134,27,7,.55)) !important;
+  color: var(--c-shu) !important;
+}
+.slash-btn:hover{
+  filter: drop-shadow(3px 3px 0 var(--c-shu-deep)) drop-shadow(0 0 6px rgba(200,57,28,.4)) !important;
+}
+.slash-btn.is-burning{ animation: none !important; }
+
+/* === ピクセル削れ：Kagariの各文字 === */
+.kagari-text{ display: inline-flex; gap: .04em; }
+.k-letter{
+  display: inline-block;
+  position: relative;
+  -webkit-mask-mode: luminance;
+  mask-mode: luminance;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  will-change: mask-image;
+}
+.k-letter--gone{ visibility: hidden; }
+
+/* 飛び散るピクセル */
+.pixel-shard{
+  position: fixed;
+  width: 4px; height: 4px;
+  background: var(--c-ink);
+  z-index: 82;
+  pointer-events: none;
+  animation: shardFly 1s cubic-bezier(.3,.7,.4,1) forwards;
+  image-rendering: pixelated;
+}
+.pixel-shard--crit{
+  width: 8px; height: 8px;
+  background: var(--c-shu);
+  box-shadow: 0 0 0 2px var(--c-shu-deep);
+}
+@keyframes shardFly{
+  0%   { transform: translate(0,0) rotate(0deg); opacity: 1; }
+  70%  { opacity: 1; }
+  100% { transform: translate(var(--dx,0), var(--dy,-80px)) rotate(180deg); opacity: 0; }
+}
+
+/* クリティカル時のテキスト */
+.crit-text{
+  position: fixed;
+  z-index: 83;
+  font-family: "Press Start 2P", monospace;
+  font-size: 1rem;
+  color: var(--c-shu);
+  text-shadow: 2px 2px 0 var(--c-ink);
+  pointer-events: none;
+  animation: critPop .9s steps(6, end) forwards;
+}
+@keyframes critPop{
+  0%   { transform: translate(-50%, 0) scale(.6); opacity: 0; }
+  20%  { transform: translate(-50%, -20px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+}
+
+/* === ABOUT：/Kagariを大きいオレンジで先頭表示 === */
+/* 既存の ::first-letter 装飾を打ち消す（K1文字だけ大きい仕様を解除） */
+.about__body p:first-child::first-letter{
+  font-family: inherit !important;
+  font-size: inherit !important;
+  float: none !important;
+  padding: 0 !important;
+  color: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+.brand-big{
+  font-family: "Press Start 2P", monospace;
+  color: var(--c-shu);
+  font-size: clamp(1.6rem, 1rem + 1.6vw, 2.6rem);
+  display: inline-block;
+  line-height: 1;
+  margin-bottom: .9rem;
+  letter-spacing: 0;
+  text-shadow: 2px 2px 0 rgba(134,27,7,.25);
+}
+
+/* リード文を1行に収める（小画面ではフォントを縮める） */
+.about__lead{
+  white-space: nowrap;
+  font-size: clamp(.95rem, .7rem + .9vw, 1.55rem) !important;
+}
+.about__lead p{ overflow: visible; }
+
+/* 日本語の自然な改行を有効化（対応ブラウザのみ） */
+p, .products__note, .about__body p, .detail-card p{
+  word-break: auto-phrase;
+  line-break: strict;
+}
+
+/* === CONTACT：ひっそり === */
+#contact{ padding-top: 3.5rem !important; padding-bottom: 3.5rem !important; }
+#contact .section__head{
+  grid-template-columns: 120px 1fr auto !important;
+  margin-bottom: 1.4rem !important;
+  padding-bottom: .7rem !important;
+}
+#contact .section__num{ font-size: .48rem !important; }
+#contact .section__title{
+  font-size: clamp(1.1rem, .8rem + 1vw, 1.6rem) !important;
+}
+#contact .section__title em{ font-size: .55em !important; }
+#contact .section__rule{ font-size: .75rem !important; }
+.contact__row{
+  padding: .7rem 0 !important;
+  gap: 1rem !important;
+}
+.contact__row .lbl{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .48rem !important;
+  letter-spacing: .15em !important;
+  min-width: 60px !important;
+}
+.contact__row a{
+  font-family: "VT323", monospace !important;
+  font-style: normal !important;
+  font-size: 1rem !important;
+  letter-spacing: .04em !important;
+}
+.contact__row .note{
+  font-family: "VT323", monospace !important;
+  font-size: .85rem !important;
+  letter-spacing: .1em !important;
+  text-transform: none !important;
+}
+
+/* === PRODUCTS：見出しと製品ステージの間を詰める === */
+#products .section__head{ margin-bottom: 1.8rem !important; }
+
+/* === 詳細パネル：1カラムに整理してバランスを取る === */
+.detail__panel{ grid-template-columns: 1fr !important; gap: 12px !important; }
+.detail-card--meta,
+.detail-card--features,
+.detail-card--desc,
+.detail-card--cta{
+  grid-column: 1 / -1 !important;
+}
+
+/* メタ情報を横一列に */
+.detail-card--meta dl{
+  display: grid !important;
+  grid-template-rows: auto auto !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: 1fr !important;
+  gap: .15rem 1.4rem !important;
+  align-items: start !important;
+}
+.detail-card--meta dt{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .48rem !important;
+  letter-spacing: .15em !important;
+  color: var(--c-ai) !important;
+}
+.detail-card--meta dd{
+  font-family: "DotGothic16", sans-serif !important;
+  font-size: .95rem !important;
+}
+.detail-card--meta .status{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .55rem !important;
+  letter-spacing: .12em !important;
+}
+
+/* Key Features 全幅で読みやすく */
+.detail-card--features{ padding: 1.2rem 1.4rem !important; }
+.detail-card--features h4{
+  font-family: "Press Start 2P", monospace !important;
+  font-size: .65rem !important;
+  letter-spacing: .15em !important;
+  color: var(--c-shu) !important;
+  margin-bottom: .9rem !important;
+}
+.detail-card--features ul{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .25rem 1.6rem;
+}
+.detail-card--features ul li{
+  font-family: "DotGothic16", sans-serif !important;
+  font-size: 1rem !important;
+  padding: .45rem 0 .45rem 1.2rem !important;
+  line-height: 1.6 !important;
+}
+@media (max-width: 720px){
+  .detail-card--features ul{ grid-template-columns: 1fr; }
+}
+
+/* Overview ヘッダーを大きく */
+.detail-card--desc{ padding: 1.4rem 1.6rem !important; }
+.detail-card--desc h4{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 1.15rem !important;
+  letter-spacing: .12em !important;
+  color: var(--c-ink) !important;
+  margin-bottom: 1rem !important;
+  text-transform: none !important;
+}
+.detail-card--desc h4::before{
+  width: 18px !important; height: 2px !important;
+}
+.detail-card--desc p{
+  font-family: "DotGothic16", sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.85 !important;
+}
+
+/* hero h3 のサブ削除に伴う調整 */
+.detail-card--hero h3{
+  font-family: "DotGothic16", sans-serif !important;
+  font-weight: 400 !important;
+  font-size: 1.6rem !important;
+}
+
+/* === Complete!! オーバーレイ === */
+.complete-text{
+  position: fixed;
+  z-index: 84;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(1.6rem, 1rem + 2.5vw, 3rem);
+  color: var(--c-shu);
+  text-shadow:
+    3px 3px 0 var(--c-ink),
+    6px 6px 0 rgba(134,27,7,.5);
+  pointer-events: none;
+  letter-spacing: .04em;
+  animation: completePop 1.2s steps(8, end) forwards;
+}
+@keyframes completePop{
+  0%   { transform: translateY(8px) scale(.5); opacity: 0; }
+  30%  { transform: translateY(0) scale(1.18); opacity: 1; }
+  60%  { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+.complete-inline{
+  display: inline-block;
+  font-family: "Press Start 2P", monospace;
+  color: var(--c-shu);
+  font-size: clamp(1.2rem, .9rem + 1.6vw, 2.2rem);
+  letter-spacing: .04em;
+  text-shadow:
+    3px 3px 0 var(--c-ink),
+    6px 6px 0 rgba(134,27,7,.45);
+  animation: completePop 1.2s steps(8, end) both;
+  vertical-align: middle;
+  margin-left: .15em;
+}
+.complete-banner{
+  position: absolute;
+  font-family: "Press Start 2P", monospace;
+  color: var(--c-shu);
+  font-size: clamp(1rem, .8rem + 1vw, 1.6rem);
+  text-shadow: 2px 2px 0 var(--c-ink);
+  letter-spacing: .04em;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* / クリック封印 */
+.slash-btn[disabled]{
+  cursor: default;
+  opacity: .85;
+}
+.slash-btn[disabled]:hover{
+  transform: none !important;
+  filter: drop-shadow(2px 2px 0 rgba(134,27,7,.55)) !important;
+}
+
+/* phone__home：アプリだけのグリッド。製品追加で並ぶ前提 */
+.phone__home{
+  inset: 70px 18px 100px 18px !important;
+  align-content: start !important;
+  gap: 22px 14px !important;
+}
+
+/* 斬撃ラインを「指定座標を中心」にスケールさせる */
+.slash-line{ transform-origin: 50% 50% !important; }
 </style>
 </head>
 <body>
@@ -1078,15 +1667,8 @@ section:not(.hero){
   <div class="hero__main">
     <h1 class="hero__title">
       <span class="slash-wrap">
-        <span class="slash-flame" aria-hidden="true"></span>
-        <span class="embers" aria-hidden="true">
-          <span class="ember" style="--lx:30%; --dx:-6px; --dur:3.0s; --delay:.0s"></span>
-          <span class="ember" style="--lx:55%; --dx:8px; --dur:3.6s; --delay:.7s"></span>
-          <span class="ember" style="--lx:70%; --dx:-4px; --dur:2.8s; --delay:1.4s"></span>
-          <span class="ember" style="--lx:42%; --dx:10px; --dur:3.4s; --delay:2.1s"></span>
-        </span>
         <button class="slash-btn" id="slash-btn" aria-label="斬撃を放つ" type="button">/</button>
-      </span><span class="kagari-text">Kagari</span>
+      </span><span class="kagari-text" id="kagari-text"><span class="k-letter">K</span><span class="k-letter">a</span><span class="k-letter">g</span><span class="k-letter">a</span><span class="k-letter">r</span><span class="k-letter">i</span></span>
     </h1>
     <p class="hero__tag-ja">篝に必要な灯りを。</p>
     <p class="hero__tag-en">Light for the watchfire.</p>
@@ -1116,7 +1698,6 @@ section:not(.hero){
 
   <aside class="hero__margin-r" aria-hidden="true">
     <span class="coord">35.6762° N · 139.6503° E</span>
-    <div class="stamp">/篝<br>印</div>
   </aside>
 </section>
 
@@ -1128,11 +1709,11 @@ section:not(.hero){
     <div class="section__rule">read time · 01:00</div>
   </div>
   <div class="about__grid">
-    <div class="about__lead"><p>過剰な情報の時代に、<em>必要な灯り</em>だけを。</p></div>
+    <div class="about__lead"><p>過剰な情報の時代に、<em>必要な灯り</em>を。</p></div>
     <div class="about__body">
-      <p><strong>「/Kagari」</strong>。篝（かがり）は、かつて夜の港や道ばたで燃やされた、導きのための火。過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
-      <p>情報もサービスも溢れる今、使う人の生活になじむものを作りたい。</p>
-      <p>一人の開発者で、納得のいくものを世に出す。それが /Kagari です。</p>
+      <p><span class="brand-big">/Kagari</span><br>篝（かがり）は、かつて夜の港や道ばたで燃やされた、導きのための火。<br>過剰ではなく、必要な分だけ。明るすぎず、けれど確かに足元を照らす。</p>
+      <p>情報もサービスも溢れる今、<br>使う人の生活になじむものを作りたい。</p>
+      <p>一人の開発者で、納得のいくものを世に出す。<br>それが /Kagari です。</p>
     </div>
   </div>
 </section>
@@ -1143,18 +1724,6 @@ section:not(.hero){
     <div class="section__num">02 / Products</div>
     <h2 class="section__title"><span>製品索引</span><em>The catalogue</em></h2>
     <div class="section__rule">tap an icon · 詳細展開</div>
-  </div>
-
-  <div class="products__intro">
-    <p class="products__note">
-      アプリ単位で増えていく仕事を、ホーム画面に並べた索引として収めました。
-      アイコンを選ぶと右側に詳細が展開します。
-    </p>
-    <div class="products__hint">
-      <b>↘ TAP TO OPEN</b>
-      <span>01 active</span>
-      <span>updated 2026-04-26</span>
-    </div>
   </div>
 
   <div class="products__stage">
@@ -1177,30 +1746,7 @@ section:not(.hero){
 
         <div class="phone__home">
 
-          <!-- 大型クロックウィジェット (2x2) -->
-          <div class="widget widget--clock">
-            <span class="label">JST · TOKYO</span>
-            <span class="time" id="phone-time-big">--:--</span>
-            <span class="date" id="phone-date">— —</span>
-          </div>
-
-          <!-- スタジオウィジェット (2x1) -->
-          <div class="widget widget--studio">
-            <div>
-              <div class="head">/Kagari</div>
-              <div class="num">01</div>
-              <div class="lbl">released</div>
-            </div>
-            <span class="pulse"></span>
-          </div>
-
-          <!-- 次のリリース (2x1) -->
-          <div class="widget widget--release">
-            <span class="label">Next ─ in development</span>
-            <span class="name">未公開プロジェクト</span>
-            <span class="status">○ coming soon</span>
-          </div>
-
+          <!-- ここに製品が増えるたびにアプリアイコンを追加していく -->
           <!-- Only Task アイコン -->
           <button class="app app--badge" data-app="only-task" data-badge="1" aria-label="Only Task の詳細を開く">
             <span class="icon">
@@ -1239,7 +1785,7 @@ section:not(.hero){
       <div class="detail__empty" id="detail-empty">
         <span class="hint">SELECT AN APP</span>
         <span class="arrow">←</span>
-        <p>左のアイコンを押すと、製品の詳細・主な機能・ステータスがここに展開されます。</p>
+        <p>左のアイコンを押すと、<br>製品の詳細・主な機能・ステータスが<br>ここに展開されます。</p>
       </div>
 
       <div class="detail__panel" data-detail="only-task">
@@ -1254,7 +1800,7 @@ section:not(.hero){
               <path d="M22 30 L28 36 L44 20" stroke="#C8391C" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </span>
-          <h3>Only Task<small>only the task that matters today</small></h3>
+          <h3>Only Task</h3>
           <span class="pid">P-001</span>
         </div>
 
@@ -1279,7 +1825,7 @@ section:not(.hero){
 
         <div class="detail-card detail-card--desc">
           <h4>Overview / 概 要</h4>
-          <p>多すぎるToDoは、もう要らない。Only Task は「今一つやるべき」タスクを完了させるためのアプリです。後回しはやめて、タスク完了を重視。過去のタスクの分析も可能です。</p>
+          <p>多すぎるToDoは、もう要らない。<br>Only Task は「今一つやるべき」タスクを<br>完了させるためのアプリです。<br>後回しはやめて、タスク完了を重視。<br>過去のタスクの分析も可能です。</p>
         </div>
 
         <div class="detail-card detail-card--cta">
@@ -1379,45 +1925,200 @@ section:not(.hero){
   }
   if (!reduced) typeLoop();
 
-  // 「/」斬撃
+  // 「/」斬撃 → Kagari をランダムにピクセル削り
   const slashBtn = document.getElementById('slash-btn');
   const fx = document.querySelector('.slash-fx');
+  const kagariEl = document.getElementById('kagari-text');
+
+  let isComplete = false;
+
+  // 文字を粗いグリッド（~5×6）にダウンサンプリングして、字形のあるセルだけをHPにする。
+  // 全体で 50 ピクセル前後になるよう調整。各クリックでランダムに1セル削る。
+  const letters = [];
+  function initKagari(){
+    if (!kagariEl) return;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    kagariEl.querySelectorAll('.k-letter').forEach(el => {
+      const cs = getComputedStyle(el);
+      const fs = parseFloat(cs.fontSize);
+      const w = Math.max(1, Math.ceil(el.getBoundingClientRect().width));
+      const h = Math.max(1, Math.ceil(el.getBoundingClientRect().height));
+      canvas.width = w; canvas.height = h;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = '#000';
+      ctx.font = `${cs.fontWeight} ${fs}px ${cs.fontFamily}`;
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText(el.textContent, 0, h * 0.85);
+      const data = ctx.getImageData(0, 0, w, h).data;
+
+      // 粗いグリッド：縦6、横は文字の縦横比に応じて
+      const GH = 6;
+      const GW = Math.max(2, Math.round(w / h * GH));
+      const ink = [];
+      for (let gy = 0; gy < GH; gy++){
+        for (let gx = 0; gx < GW; gx++){
+          const x0 = Math.floor(gx * w / GW), x1 = Math.floor((gx + 1) * w / GW);
+          const y0 = Math.floor(gy * h / GH), y1 = Math.floor((gy + 1) * h / GH);
+          let any = false;
+          for (let y = y0; y < y1 && !any; y++){
+            for (let x = x0; x < x1; x++){
+              if (data[(y * w + x) * 4 + 3] > 80){ any = true; break; }
+            }
+          }
+          if (any) ink.push([gx, gy]);
+        }
+      }
+
+      letters.push({
+        el, width: GW, height: GH,
+        ink, removed: new Set(),
+        maxHp: ink.length
+      });
+    });
+  }
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(initKagari);
+  } else {
+    addEventListener('load', initKagari);
+  }
+
+  function applyMask(L){
+    if (L.removed.size === 0){
+      L.el.style.maskImage = '';
+      L.el.style.webkitMaskImage = '';
+      return;
+    }
+    let rects = '';
+    for (const key of L.removed){
+      const i = key.indexOf(',');
+      const x = key.slice(0, i), y = key.slice(i + 1);
+      rects += `<rect x='${x}' y='${y}' width='1' height='1' fill='black'/>`;
+    }
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${L.width}' height='${L.height}' shape-rendering='crispEdges'><rect width='${L.width}' height='${L.height}' fill='white'/>${rects}</svg>`;
+    const url = `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
+    L.el.style.maskImage = url;
+    L.el.style.webkitMaskImage = url;
+  }
+
+  function spawnShard(x, y, crit){
+    const shard = document.createElement('div');
+    shard.className = 'pixel-shard' + (crit ? ' pixel-shard--crit' : '');
+    shard.style.left = x + 'px';
+    shard.style.top = y + 'px';
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.1;
+    const dist = 50 + Math.random() * (crit ? 200 : 120);
+    shard.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+    shard.style.setProperty('--dy', Math.sin(angle) * dist - 10 + 'px');
+    shard.style.animationDelay = (Math.random() * .1) + 's';
+    fx.appendChild(shard);
+    setTimeout(() => shard.remove(), 1300);
+  }
+
+  // 生存している字形ピクセルからランダムに1点選んで削る
+  function chipOnePixel(crit){
+    const alive = letters.filter(L => L.removed.size < L.maxHp);
+    if (alive.length === 0) return null;
+    const L = alive[Math.floor(Math.random() * alive.length)];
+
+    // ランダムな未削除点を見つける（試行＋フォールバック走査）
+    let pick = null;
+    for (let i = 0; i < 40; i++){
+      const p = L.ink[Math.floor(Math.random() * L.ink.length)];
+      const k = p[0] + ',' + p[1];
+      if (!L.removed.has(k)){ pick = { p, k }; break; }
+    }
+    if (!pick){
+      for (const p of L.ink){
+        const k = p[0] + ',' + p[1];
+        if (!L.removed.has(k)){ pick = { p, k }; break; }
+      }
+    }
+    if (!pick) return null;
+
+    L.removed.add(pick.k);
+    applyMask(L);
+    if (L.removed.size >= L.maxHp) L.el.classList.add('k-letter--gone');
+
+    const r = L.el.getBoundingClientRect();
+    const cellW = r.width / L.width;
+    const cellH = r.height / L.height;
+    const sx = r.left + (pick.p[0] + 0.5) * cellW;
+    const sy = r.top  + (pick.p[1] + 0.5) * cellH;
+    spawnShard(sx, sy, crit);
+    return { L, x: sx, y: sy };
+  }
+
+  function showCritText(target){
+    if (!target) return;
+    const t = document.createElement('div');
+    t.className = 'crit-text';
+    t.textContent = 'CRIT!';
+    t.style.left = target.x + 'px';
+    t.style.top  = (target.y - 8) + 'px';
+    fx.appendChild(t);
+    setTimeout(() => t.remove(), 950);
+  }
+
   function triggerSlash(){
-    if (reduced) return;
-    slashBtn.classList.remove('is-burning');
-    void slashBtn.offsetWidth;
-    slashBtn.classList.add('is-burning');
+    if (reduced || isComplete) return;
+    if (letters.length === 0) return;
+    if (letters.every(L => L.removed.size >= L.maxHp)) return;
+
+    // ランダムな生存文字に向けて斬撃ラインを走らせる
+    const alive = letters.filter(L => L.removed.size < L.maxHp);
+    const target = alive[Math.floor(Math.random() * alive.length)];
+    const r = target.el.getBoundingClientRect();
+    const tx = r.left + Math.random() * r.width;
+    const ty = r.top + r.height / 2;
 
     const slash = document.createElement('div');
     slash.className = 'slash-line';
+    slash.style.left = tx + 'px';
+    slash.style.top  = ty + 'px';
+    const angle = -25 + (Math.random() * 50);
+    slash.style.setProperty('--angle', angle + 'deg');
     fx.appendChild(slash);
-    const angle = -18 + (Math.random()*8 - 4);
-    slash.style.setProperty('--angle', angle+'deg');
+    setTimeout(() => slash.remove(), 700);
 
-    const r = slashBtn.getBoundingClientRect();
-    const ox = r.left + r.width/2, oy = r.top + r.height/2;
-    for (let i=0;i<20;i++){
-      const s = document.createElement('div');
-      s.className = 'spark';
-      const a = Math.random()*Math.PI*2;
-      const d = 80 + Math.random()*200;
-      s.style.left = ox+'px'; s.style.top = oy+'px';
-      s.style.setProperty('--dx', Math.cos(a)*d+'px');
-      s.style.setProperty('--dy', Math.sin(a)*d+'px');
-      s.style.setProperty('--size', (2+Math.random()*4)+'px');
-      s.style.animationDelay = (Math.random()*.1)+'s';
-      fx.appendChild(s);
-      setTimeout(()=>s.remove(), 1400);
-    }
-    const flash = document.createElement('div');
-    flash.className = 'flash'; fx.appendChild(flash);
-    setTimeout(()=>flash.remove(), 500);
-    setTimeout(()=>slash.remove(), 1200);
-    setTimeout(()=>slashBtn.classList.remove('is-burning'), 1300);
+    // クリティカル判定（30分の1で6ピクセル削る）/ 通常は2ピクセル（約50クリックで完走）
+    const crit = Math.random() < (1 / 30);
+    const dmg = crit ? 6 : 2;
+
+    setTimeout(() => {
+      let last = null;
+      for (let i = 0; i < dmg; i++){
+        const hit = chipOnePixel(crit);
+        if (!hit) break;
+        last = hit;
+      }
+      if (crit) showCritText(last);
+      checkComplete();
+    }, 130);
   }
+
+  function checkComplete(){
+    if (isComplete) return;
+    if (!letters.length) return;
+    if (!letters.every(L => L.removed.size >= L.maxHp)) return;
+    isComplete = true;
+    slashBtn.setAttribute('disabled', 'disabled');
+    slashBtn.setAttribute('aria-disabled', 'true');
+
+    // Kagariの位置に Complete!! をインラインで差し替え（スクロール追従しない）
+    if (kagariEl){
+      kagariEl.innerHTML = '';
+      const inline = document.createElement('span');
+      inline.className = 'complete-inline';
+      inline.textContent = 'Complete!!';
+      kagariEl.appendChild(inline);
+    }
+  }
+
   if (slashBtn){
     slashBtn.addEventListener('click', triggerSlash);
-    setTimeout(triggerSlash, 1400);
   }
 
   // アプリ詳細展開
